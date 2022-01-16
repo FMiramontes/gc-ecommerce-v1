@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const catalyst = require('zcatalyst-sdk-node')
 const catalystToken = require('../catalysToken')
 
+/*
 const crm = {
   createProductCRM: async (Product_Name, Manzana_y_Lote, Unit_Price, Nombre_Fraccionamiento, Fraccionamiento, M, L, accessToken) => {
 
@@ -321,34 +322,6 @@ const books = {
   },
 }
 
-/* 
- data = [
-      //oro
-      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 4, "end": 22, "Lotes": {"init": 1, "end": 19} }, 
-      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 23, "end": 35, "Lotes": {"init": 1, "end": 26} },
-      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 36, "end": 37, "Lotes": null }, 
-      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 129, "end": 133, "Lotes": null }, 
-      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 139, "end": 144, "Lotes": null },
-      // perla 
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 22, "end": 22, "Lotes": {"init": 20, "end": 44} }, 
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 35, "end": 35, "Lotes": {"init": 27, "end": 53} },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 41, "end": 53, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 60, "end": 100, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 127, "end": 128, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 134, "end": 138, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 150, "end": 162, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 164, "end": 170, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 172, "end": 186, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 188, "end": 188, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 192, "end": 194, "Lotes": null },
-      //ELITE
-      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 101, "end": 105, "Lotes": null },
-      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 107, "end": 109, "Lotes": null },
-      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 111, "end": 112, "Lotes": null },
-      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 196, "end": 199, "Lotes": null }
-      
-    ]
-*/
 
 const books2 = {
   convertirFecha(fecha) {
@@ -610,3 +583,33 @@ const books2 = {
 
 
 module.exports = books2
+*/
+
+/* 
+ data = [
+      //oro
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 4, "end": 22, "Lotes": {"init": 1, "end": 19} }, 
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 23, "end": 35, "Lotes": {"init": 1, "end": 26} },
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 36, "end": 37, "Lotes": null }, 
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 129, "end": 133, "Lotes": null }, 
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 139, "end": 144, "Lotes": null },
+      // perla 
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 22, "end": 22, "Lotes": {"init": 20, "end": 44} }, 
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 35, "end": 35, "Lotes": {"init": 27, "end": 53} },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 41, "end": 53, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 60, "end": 100, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 127, "end": 128, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 134, "end": 138, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 150, "end": 162, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 164, "end": 170, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 172, "end": 186, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 188, "end": 188, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 192, "end": 194, "Lotes": null },
+      //ELITE
+      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 101, "end": 105, "Lotes": null },
+      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 107, "end": 109, "Lotes": null },
+      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 111, "end": 112, "Lotes": null },
+      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 196, "end": 199, "Lotes": null }
+      
+    ]
+*/

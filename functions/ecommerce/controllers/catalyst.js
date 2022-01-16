@@ -10,16 +10,19 @@ const catalyst = {
 
     let query = `SELECT Fraccionamiento, logo, img FROM fraccionamientos`
     console.log(query)
-
-    let zcql = app.zcql()
-    let zcqlPromise = zcql.executeZCQLQuery(query)
-    zcqlPromise.then(async (queryResult) => {
-      if (queryResult.length === 0) {
-        res.send({ message: 'No hay fraccionamientos' })
-      } else {
-        res.send(queryResult)
-      }
-    })
+    try {
+      let zcql = app.zcql()
+      let zcqlPromise = zcql.executeZCQLQuery(query)
+      zcqlPromise.then(async (queryResult) => {
+        if (queryResult.length === 0) {
+          res.send({ message: 'No hay fraccionamientos' })
+        } else {
+          res.send(queryResult)
+        }
+      })
+    } catch (error) {
+      console.log(error)
+    }
   },
   getDetails: async (req, res) => {
     const app = catalystSDK.initialize(req)
