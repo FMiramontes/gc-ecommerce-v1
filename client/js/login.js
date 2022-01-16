@@ -116,43 +116,8 @@ const login = {
     // send.addEventListener('click', async (e) => {
     //   e.preventDefault()
 
-    //   // Obtener ID de Producto
-    //   let productID = null
-    //   let montoEnganche = null
-    //   const item = e.target.closest('[data-item]').dataset.item
-    //   const producto = document.getElementById(item)
-    //   const estaCRM = producto.dataset.crm
-    //   if (estaCRM == 'true') {
-    //     productID = item
-    //   } else {
-    //     productID = item
-    //   }
-    //   console.log(productID)
 
-    //   // Obtener fraccionamiento index
-    //   const urlSearchParams = new URLSearchParams(window.location.search)
-    //   const params = Object.fromEntries(urlSearchParams.entries())
-    //   const fraccIndex = params.index
-    //   console.log(fraccIndex)
-
-    //   const modal = e.target.closest('#modal')
-
-    //   // esEnganche
-    //   const esEnganche = modal.querySelector('#checkEnganche').checked
-    //   if (esEnganche) {
-    //     montoEnganche = modal.querySelector('#monto-enganche').value
-    //     console.log(montoEnganche)
-    //   }
-    //   const request = await Zoho.createInvoice(
-    //     productID,
-    //     fraccIndex,
-    //     esEnganche,
-    //     montoEnganche
-    //   )
-
-    //   console.log(request)
-
-    //   console.log(e)
+    
     // })
     return true
   },
