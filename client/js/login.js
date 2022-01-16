@@ -99,7 +99,7 @@ const login = {
                 </select>
             </div>            
                 <div class="element">                          
-                    <button type="submit" id="btn-enviar" class="enviar">Enviar</button>
+                    <button type="submit" id="btn-enviar" class="enviar" disabled >Enviar</button>
                 </div>
                 <div class="element">
                     <button type="submit" id="btn-cancelar" class="cancelar">Cancelar</button>
@@ -113,12 +113,19 @@ const login = {
       })
     //Obtener boton send
     const send = document.getElementById('btn-enviar')
-    // send.addEventListener('click', async (e) => {
-    //   e.preventDefault()
+    send.addEventListener('click', async (e) => {
+      e.preventDefault()
 
 
     
-    // })
+    })
+
+    const cancel = document.getElementById('btn-cancelar')
+    cancel.addEventListener('click', async (e) => {
+      e.preventDefault()
+      login.viewModal(false)
+      login.innerPay()
+    })
     return true
   },
   MostrarDiv(checkEnganche) {
