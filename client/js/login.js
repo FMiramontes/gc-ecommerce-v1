@@ -259,10 +259,12 @@ const login = {
     this.viewModal(false)
     if(sesionPago == false)
         {
-            this.viewModal(true)
+            this.viewModal(true,loteSeleccionado.target.id)
+            console.log(loteSeleccionado.target.id)
             if(pay) this.innerPay()
             Loader.loadOpciones()
             this.mostrarInfoLote(loteSeleccionado) 
+            
         }
   },
   mostrarBoton: () => {
