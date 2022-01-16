@@ -216,7 +216,6 @@ const login = {
         'Content-Type': 'application/json',
       },
     })
-    console.log(loagout)
     sessionStorage.removeItem('usuario')
     sessionStorage.removeItem('correo')
     sessionStorage.removeItem('sesion')
