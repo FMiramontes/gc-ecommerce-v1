@@ -10,13 +10,18 @@ const zoho = {
         select: parseSel,
       }
       console.log(JSON.stringify(data))
-      const comprobar = fetch(`/server/ecommerce/books/createFactura`, {
+      const comprobar = await fetch(`/server/ecommerce/books/createFactura`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       })
+
+      const res = await comprobar.json()
+      console.log(res)
+
+      return res
     } catch (error) {
       return error
     }

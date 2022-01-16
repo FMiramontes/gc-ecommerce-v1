@@ -3,12 +3,8 @@ const jwt = require('jsonwebtoken')
 const catalyst = require('zcatalyst-sdk-node')
 const catalystToken = require('../catalysToken')
 
-// const { crmC, catalystC } = require('./')
-
-// const functions = require('../functions/token')
-
 const crm = {
-  async createProductCRM(Product_Name, Manzana_y_Lote, Unit_Price, Nombre_Fraccionamiento, Fraccionamiento, M, L, accessToken) {
+  createProductCRM: async (Product_Name, Manzana_y_Lote, Unit_Price, Nombre_Fraccionamiento, Fraccionamiento, M, L, accessToken) => {
 
     // const data = { Product_Name, Unit_Price, Manzana_y_Lote, Nombre_Fraccionamiento, Fraccionamiento }
     const Lote = L.replace(/\D+/g, '')
@@ -27,7 +23,7 @@ const crm = {
           Fraccionamiento: { "id": Fraccionamiento },
           Uso_Predio: "Habitacional",
           Uso_Habitacional: "Terreno",
-          Estado: "Apartado",
+          Estado: "Disponible",
           Costo_por_M2: 200,
           Dimension_del_Terreno_M21: 100,
         }
@@ -48,8 +44,15 @@ const crm = {
     // Realizar peticion con Axios
     try {
       const resp = await axios(config)
-      console.log("------ books.createProductCRM -----")
+      console.log("------ crm.createProductCRM -----")
       console.log(resp.data)
+      let error = resp.data?.data[0]?.code != 'SUCCESS' ? true : false
+      if (error) {
+        console.log("------ Error en crm.createProductCRM -----")
+        console.log(resp.data.data[0]?.message)
+        console.log("------ Error en crm.createProductCRM -----")
+        throw Error(resp.data.data[0]?.message)
+      }
       return resp.data?.data ? resp.data.data[0]?.details?.id ?? false : false
     } catch (error) {
       return error
@@ -84,6 +87,13 @@ const crm = {
       const resp = await axios(config)
       console.log("------ books.createContact -----")
       console.log(resp.data)
+      let error = resp.data?.data[0]?.code != 'SUCCESS' ? true : false
+      if (error) {
+        console.log("------ Error en crm.createProductCRM -----")
+        console.log(resp.data.data[0]?.message)
+        console.log("------ Error en crm.createProductCRM -----")
+        throw Error(resp.data.data[0]?.message)
+      }
       return resp.data?.data ? resp.data.data[0]?.details?.id ?? false : false
     } catch (error) {
       return error
@@ -110,7 +120,7 @@ const crm = {
     }
 
   },
-  async getItemBySku(sku, accessToken) {
+  getItemBySku: async (sku, accessToken) => {
     const config = {
       method: 'get',
       url: `https://www.zohoapis.com/crm/v2/Products/search?criteria=(Manzana_y_Lote:equals:${sku})`,
@@ -122,9 +132,34 @@ const crm = {
     // Realizar peticion con Axios
     try {
       const resp = await axios(config)
-      console.log("------ books.getItemBySku -----")
+      console.log("------ crm.getItemBySku -----")
       console.log(resp.data)
+      // let error = resp.data?.data ? true : false 
+      // if(!error){
+      //   console.log(resp.data?.message)
+      //   throw Error(resp.data?.message)
+      // }
       return resp.data?.data ? resp.data.data[0]?.id ?? false : false
+    } catch (error) {
+      return error
+    }
+  },
+  productAvailable: async (id, accessToken) => {
+    const config = {
+      method: 'get',
+      url: `https://www.zohoapis.com/crm/v2/Products/${id}`,
+      headers: {
+        Authorization: `Zoho-oauthtoken ${accessToken}`,
+      },
+    }
+
+    // Realizar peticion con Axios
+    try {
+      const resp = await axios(config)
+      console.log("------ crm.productAvailable -----")
+      console.log(resp.data)
+
+      return resp.data?.data[0]?.Estado == "Disponible" ? true : false 
     } catch (error) {
       return error
     }
@@ -160,6 +195,7 @@ const books = {
   async createProductBooks(name, sku, rate, accessToken) {
 
     const data = { name, rate, sku }
+    // const data = {  rate, sku }
 
     const config = {
       method: 'post',
@@ -178,6 +214,7 @@ const books = {
       console.log(resp.data)
       return resp.data?.item ? resp.data.item?.item_id ?? false : false
     } catch (error) {
+      console.log(error.response.data.message)
       return error
     }
   },
@@ -258,7 +295,7 @@ const books = {
       return resp.data?.invoice ? resp.data.invoice?.invoice_id ?? false : false
       // return resp.data
     } catch (error) {
-      console.log( error )
+      console.log(error.response.data.message)
       return error
     }
   },
@@ -284,33 +321,31 @@ const books = {
   },
 }
 
-
-
 /* 
  data = [
       //oro
-      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "init": 4, "end": 22, "Lotes": {"init": 1, "end": 19} }, 
-      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "init": 23, "end": 35, "Lotes": {"init": 1, "end": 26} },
-      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "init": 36, "end": 37, "Lotes": null }, 
-      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "init": 129, "end": 133, "Lotes": null }, 
-      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "init": 139, "end": 144, "Lotes": null },
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 4, "end": 22, "Lotes": {"init": 1, "end": 19} }, 
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 23, "end": 35, "Lotes": {"init": 1, "end": 26} },
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 36, "end": 37, "Lotes": null }, 
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 129, "end": 133, "Lotes": null }, 
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 139, "end": 144, "Lotes": null },
       // perla 
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 22, "end": 22, "Lotes": {"init": 20, "end": 44} }, 
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 35, "end": 35, "Lotes": {"init": 27, "end": 53} },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 41, "end": 53, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 60, "end": 100, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 127, "end": 128, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 134, "end": 138, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 150, "end": 162, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 164, "end": 170, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 172, "end": 186, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 188, "end": 188, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 192, "end": 194, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 22, "end": 22, "Lotes": {"init": 20, "end": 44} }, 
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 35, "end": 35, "Lotes": {"init": 27, "end": 53} },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 41, "end": 53, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 60, "end": 100, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 127, "end": 128, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 134, "end": 138, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 150, "end": 162, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 164, "end": 170, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 172, "end": 186, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 188, "end": 188, "Lotes": null },
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 192, "end": 194, "Lotes": null },
       //ELITE
-      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "init": 101, "end": 105, "Lotes": null },
-      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "init": 107, "end": 109, "Lotes": null },
-      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "init": 111, "end": 112, "Lotes": null },
-      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "init": 196, "end": 199, "Lotes": null }
+      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 101, "end": 105, "Lotes": null },
+      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 107, "end": 109, "Lotes": null },
+      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 111, "end": 112, "Lotes": null },
+      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 196, "end": 199, "Lotes": null }
       
     ]
 */
@@ -339,12 +374,10 @@ const books2 = {
       books_getContactByEmail: false,
       createInvoice: false,
       sendInvoice: false,
+      productAvailable: false,
     }
 
-    let listaRun = listaTrue
-
     try {
-      console.log(req.session.login)
       if (!req.session.login) res.status(401).send({ code: 401, message: 'Invalid user' })
       console.log('Creando Factura...')
 
@@ -362,7 +395,7 @@ const books2 = {
       let zcql = app.zcql()
       let query_fraccionamiento = await zcql.executeZCQLQuery(query)
 
-      if (query_fraccionamiento.length == 0) res.send({ code: 404, message: "Block not found !!" })
+      if (query_fraccionamiento.length == 0) res.status(404).send({ code: 404, message: "Block not found !!" })
 
       data = query_fraccionamiento[position].fraccionamientos
       // --------------------
@@ -373,7 +406,6 @@ const books2 = {
         let tempManzana = name_array2[0].replace('M', '');
         let tempLote = name_array2[1].replace('L', '');
 
-        // console.log("Manzana: "+tempManzana +" - Lote: "+tempLote)
         let manzana = parseInt(tempManzana)
 
         if (data.esSecciones) {
@@ -408,66 +440,86 @@ const books2 = {
           })
 
         }
-        
+
         item_crm_id = await crm.getItemBySku(sku, accessToken)
-        if(item_crm_id){
+        if (item_crm_id) {
           // Producto encontrdo en CRM
           listaTrue.getItemBySku = true
-        }else{
+        } else {
           // Producto no encontrado en CRM
           item_crm_id = await crm.createProductCRM(item_name, sku, rate, nombre_fracionamiento, Fraccionamiento, tempManzana, tempLote, accessToken)
-          // 1 - id>int, 2 - false>bool, 3 - error>array 
-          if(item_crm_id){
-             listaTrue.createProductCRM = true // Producto creado en CRM
-          }else{
-            throw Error('El producto no se encontró, ni se pudo crear en CRM')
-          }
+
+          if (item_crm_id instanceof Error) throw Error(item_crm_id.message)
+
+          if (item_crm_id) listaTrue.createProductCRM = true // Producto creado en CRM
         }
 
         item_books_id = await books.getItemByName(item_name, accessToken)
-        if (item_books_id){
-          // Producto encontrdo en Books
+        if (item_books_id) {
+          // Producto encontrado en Books
           listaTrue.getItemByName = true
-        }else{
+        } else {
           // Producto no encontrado en Books
           item_books_id = await books.createProductBooks(item_name, sku, rate, accessToken)
-          if(item_books_id) listaTrue.createProductBooks = true // Producto creado en Books
-        }
-        
-        
 
+          if (item_books_id instanceof Error) throw Error(item_books_id.message)
+
+          if (item_books_id) listaTrue.createProductBooks = true // Producto creado en Books
+        }
       } else {
         item_books_id = await books.getIdItem(item, accessToken)
-        if(item_books_id) listaTrue.getIdItem = true // Producto encontrado en Books
+        if (item_books_id) listaTrue.getIdItem = true // Producto encontrado en Books
       }
-
-      // if (!item_crm_id){ 
-      //   let listaTrue = listaTrue.map((l) => { if(!l) return l })
-      //   throw Error('')
-      // }
-
-      // if (!item_books_id) throw Error('')
 
       // Verifica el JWT
       const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET)
       let query_user = `SELECT * FROM users WHERE users.ROWID = '${decoded.idUser}'`;
       let user = await zcql.executeZCQLQuery(query_user);
+
       // busca al contacto, si no lo encuentra lo crea en CRM y lo sincroniza
 
-      if (user.length == 0) res.send({ code: 401, message: "User not found !!" })
+      if (user.length == 0) res.status(401).send({ code: 401, message: "User not found !!" })
 
       let email = user[0].users.email
       if (email) {
         contact_crm_id = await crm.getContactByEmail(email, accessToken)
+        contact_crm_id = false
         if (!contact_crm_id) {
           let first_name = user[0].users.first_name
+          
           let last_name = user[0].users.last_name
+          
           let phone = user[0].users.phone
+          
           contact_crm_id = await crm.createContactCRM(first_name, last_name, email, phone, accessToken)
-          contact_books_id = await books.syncContactoBooks(contact_crm_id, accessToken)
+
+          if (contact_crm_id instanceof Error) {
+
+            if (contact_crm_id.message != "duplicate data") throw Error(contact_crm_id.message)
+            
+            contact_crm_id = await crm.getContactByEmail(email, accessToken)
+           
+            if (contact_crm_id) listaTrue.crm_getContactByEmail = true
+            
+            contact_books_id = await books.getContactByEmail(email, accessToken)
+           
+            if (contact_books_id) listaTrue.books_getContactByEmail = true
+
+          } else {
+
+            if (contact_crm_id) listaTrue.createContactCRM = true // Constacto creado en CRM
+
+            contact_books_id = await books.syncContactoBooks(contact_crm_id, accessToken)
+
+            if (contact_books_id instanceof Error) throw Error(contact_books_id.message)
+
+            if (contact_books_id) listaTrue.syncContactoBooks = true // Constacto creado en Books
+          
+          }
         } else {
-          // crear funcion
           contact_books_id = await books.getContactByEmail(email, accessToken)
+
+          if (contact_books_id) listaTrue.syncContactoBooks = true // Constacto creado en Books
         }
       }
 
@@ -479,6 +531,16 @@ const books2 = {
       console.log("contact_books_id", contact_books_id)
       console.log('---------------------------------------------------------')
 
+      if (!item_crm_id) throw Error("Error al conseguir item_crm_id")
+      if (!item_books_id) throw Error("Error al conseguir item_books_id")
+      if (!contact_crm_id) throw Error("Error al conseguir contact_crm_id")
+      if (!contact_books_id) throw Error("Error al conseguir contact_books_id")
+
+      const disponibilidad = await crm.productAvailable(item_crm_id, accessToken)
+
+      if (!disponibilidad) throw Error("El producto ya se encuentra vendido")
+
+      if (disponibilidad) listaTrue.productAvailable = true
 
       let today = new Date()
       console.log("today")
@@ -489,11 +551,11 @@ const books2 = {
       )
       console.log(today)
 
-      fecha_vencimiento = fechas.convertirFecha(fecha_vencimiento)
+      fecha_vencimiento = books2.convertirFecha(fecha_vencimiento)
 
       // Consular que Tipo de Politica envio el usuario
       const tipoDePolitica = esEnganche ? 'Enganche' : 'Primer Mensualidad'
-      let pagoEnganche =  JSON.parse( data.pagoEnganche )
+      let pagoEnganche = JSON.parse(data.pagoEnganche)
       const rateInvoice = esEnganche ? pagoEnganche[select] : data.pagoPM
 
       const invoice = {
@@ -518,21 +580,30 @@ const books2 = {
       }
 
       // ******************************
+
       const invoice_id = await books.createInvoice(invoice, accessToken)
+
+      if (invoice_id instanceof Error) throw Error(invoice_id.message)
+
+      if(invoice_id) listaTrue.createInvoice = true
+
       console.log('----------------- books.createInvoice -----')
       console.log(invoice_id)
       const resSent = await books.sendInvoice(invoice_id, accessToken)
-      console.log(resSent)
+      if (resSent instanceof Error) // Mensaje Cliq
+      if(resSent) listaTrue.sendInvoice = true
       console.log('-------------------------------------------')
-      // ******************************
 
-      // const createInv = books.createInvoice()
+      // ******************************
 
       res.status(201).send({ code: 201, message: 'Invoice created' })
 
     } catch (error) {
-      console.log(error)
-      res.status(400).send({ code: 400, message: "Error in the request", error: error })
+      console.log("---------------------- Error Crear Factura ---------------")
+      console.log(listaTrue)
+      console.log(error.message)
+      console.log("---------------------- Error Crear Factura ---------------")
+      res.status(400).json({ code: 400, message: "Error in the request", error: error.message })
     }
   }
 }
