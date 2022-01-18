@@ -11,9 +11,15 @@ Loader.getDesarollos(type)
 // agrega login/pay dinamicamente
 export function validarSesion(){
   if (sessionStorage.getItem("sesion")) {
-      if(type) Login.innerPay()
-      Loader.loadOpciones()
-      Login.mostrarBoton()
+      if(type == "true"){
+        if(type) Login.innerPay()
+        Loader.loadOpciones()
+        Login.mostrarBoton()
+      }else if(type == "false"){
+        Login.innerLogin(type)
+        Login.mostrarBoton()
+      }
+      
   } else {
       Login.innerLogin(type)
       Login.mostrarBoton()

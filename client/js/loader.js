@@ -12,7 +12,8 @@ let fracc = []
 const loader = {
   toggleLoader: () => {
     setTimeout(function () {
-      $('.loader_bg').fadeToggle()
+      const Loader = document.getElementById('loader_bg')
+      Loader.classList.add("fadeLoader")
     }, 1500)
   },
   async getDesarollos(type) {

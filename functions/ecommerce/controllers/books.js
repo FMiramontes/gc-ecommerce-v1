@@ -2,6 +2,140 @@ const axios = require('axios')
 const jwt = require('jsonwebtoken')
 const catalyst = require('zcatalyst-sdk-node')
 const catalystToken = require('../catalysToken')
+// const { desk, cliq } = require('../controllers/zoho')
+const crm = require('../controllers/crm')
+
+const util = {
+  getSeccion(data){
+    let secciones_array = JSON.parse(data.secciones)
+          secciones_array.forEach((e) => {
+
+            if (manzana >= e.init && manzana <= e.end) {
+              if (e.Lotes != null && manzana == e.end) {
+                if (tempLote >= e.Lotes.init && tempLote <= e.Lotes.end) {
+                  item_name = data.code + ' ' + e.name + ' ' + item
+                  sku = name_array2[0] + "" + e.symbol + "" + name_array2[1]
+                  Fraccionamiento = e.id.toString()
+                  if (e.name) {
+                    nombre_fracionamiento = data.Fraccionamiento + " " + e.name
+                  } else {
+                    nombre_fracionamiento = data.Fraccionamiento
+                  }
+                }
+              } else {
+                item_name = data.code + ' ' + e.name + ' ' + item
+                sku = name_array2[0] + "" + e.symbol + "" + name_array2[1]
+                Fraccionamiento = e.id.toString()
+                if (e.name) {
+                  nombre_fracionamiento = data.Fraccionamiento + " " + e.name
+                } else {
+                  nombre_fracionamiento = data.Fraccionamiento
+                }
+
+              }
+            }
+          })
+  },
+} 
+
+const books = {
+    createLead: async (req, res)  => {
+      try {
+        const accessToken = await catalystToken(req)
+        const app = catalyst.initialize(req)
+        //Check for session
+        if (!req.session.login) res.status(401).send({ code: 401, message: 'Invalid user' })
+
+        // Decode jwt
+        const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET)
+
+        // Search for user in DB
+        let query_user = `SELECT * FROM users WHERE users.ROWID = '${decoded.idUser}'`;
+        
+        let zcql = app.zcql()
+        let user = await zcql.executeZCQLQuery(query_user);
+        if (user.length == 0) res.status(401).send({ code: 401, message: "User not found !!" })
+
+        
+
+        // User
+        let first_name = user[0].users.first_name
+        let last_name = user[0].users.last_name
+        let phone = user[0].users.phone
+        let email = user[0].users.email
+
+        let name = first_name +" "+last_name
+
+        // Start of proccess
+        const { item, position, esEnganche, select } = req.body
+
+        let query = `SELECT * FROM fraccionamientos`
+        let query_fraccionamiento = await zcql.executeZCQLQuery(query)
+
+        if (query_fraccionamiento.length == 0) res.status(404).send({ code: 404, message: "Block not found !!" })
+
+        data = query_fraccionamiento[position].fraccionamientos
+
+        let Product_Name = data.Fraccionamiento +" "+ item
+
+        const tipoDePolitica = esEnganche ? 'Enganche' : 'Primer Mensualidad'
+        let leadCreated = false
+        let isContact = true
+        let message = ''
+
+        // If Contact
+        const searchContact = await crm.searchContact(email, accessToken)
+        if(!searchContact.success){
+          // Contact not found
+          isContact = false
+          // If Lead
+          const searchLead = await crm.searchLead(email, accessToken)
+          console.log("searchLead - ",searchLead)
+          if(!searchLead.success){
+            // Create Lead
+            console.log("Creando Lead")
+            const createLead = await crm.createLead(first_name, last_name, email, phone, accessToken)
+            console.log("createLead - ", createLead)
+            if(createLead.success){
+              leadCreated = true
+            }
+            
+            // throw new Error('Lead not created')
+          }
+        }
+
+        if(isContact){
+          message = `El contacto ${name} esta interesado en adquirir el terreno ${Product_Name}, con una politica de ${tipoDePolitica}. 
+            
+          Datos adicionales: 
+          ${email},
+          ${phone}
+          `;
+        }else{
+          message = `El Posible Cliente ${name} esta interesado en adquirir el terreno ${Product_Name}, con una politica de ${tipoDePolitica}. 
+            
+          Datos adicionales: 
+          ${email},
+          ${phone}
+          `;
+        }
+
+        console.log('isContact', isContact)
+        console.log('leadCreated', leadCreated)
+        console.log('message', message)
+
+        return {
+          code: 201,
+          success: true,
+          message: 'Ticked created.'
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+ }
+
+ module.exports = books
 
 /*
 const crm = {
