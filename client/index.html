@@ -15,7 +15,7 @@
 
 <body data-type="false">
     <!-- Loader -->
-    <div class="loader_bg">
+    <div id="loader_bg" class="loader_bg">
         <div class="loader"></div>
     </div>
     <!-- Menu -->
@@ -39,17 +39,9 @@
         <div id="cards" class="cards"></div>
     </main>
     <!-- Navegacion hacia arriba -->
-    <span class="arriba">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-up-circle" width="40"
-            height="40" viewBox="0 0 24 24" stroke-width="1.5" stroke="#DE9F27" fill="none" stroke-linecap="round"
-            stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <circle cx="12" cy="12" r="9" />
-            <line x1="12" y1="8" x2="8" y2="12" />
-            <line x1="12" y1="8" x2="12" y2="16" />
-            <line x1="16" y1="12" x2="12" y2="8" />
-        </svg>
-    </span>
+    <button class="btn-scrolltop" id="btn_scrolltop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
     <!-- footer -->
     <footer class="footer tres-columnas">
         <div class="col-1">
@@ -94,7 +86,6 @@
 
     </div>
     <!-- scrips -->
-    <script src="./js/jquery.min.js"></script>
     <script type="module" src="./js/main.js"></script>
 </body>
 

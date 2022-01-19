@@ -12,7 +12,8 @@ let fracc = []
 const loader = {
   toggleLoader: () => {
     setTimeout(function () {
-      $('.loader_bg').fadeToggle()
+      const Loader = document.getElementById('loader_bg')
+      Loader.classList.add("fadeLoader")
     }, 1500)
   },
   async getDesarollos(type) {
@@ -29,9 +30,6 @@ const loader = {
       return await (await Desarollos).json()
     }
     const data = await getJSON()
-    console.log(data)
-    console.log('type')
-    console.log(type)
 
     if (type == 'true') {
       console.log('loadDetails')
@@ -44,7 +42,6 @@ const loader = {
   loadIndex(data) {
     const cards = document.getElementById('cards')
     data.map((i, index) => {
-      console.log(i.fraccionamientos.logo)
       let card = document.createElement('a')
       card.href = `details.html?index=${index}`
       card.classList = 'card'
@@ -68,7 +65,6 @@ const loader = {
     const frac = data[index].fraccionamientos
     fracc = frac
     const imgs = JSON.parse(frac.imgs)
-    console.log(imgs)
     imgs.forEach((element, index) => {
       let li = document.createElement("li")
       let img = document.createElement('img')
@@ -139,10 +135,7 @@ const loader = {
     const loadPlano = await fetch(`./desarrollos/${desarrollo}/plano.svg`)
     // const loadPlano = await fetch('https://grupoconcordia.com/paginawebimg/plano.svg')
 
-    console.log(loadPlano)
-
     let temp_svg = await loadPlano.text()
-    console.log( temp_svg )
     mapa.innerHTML = temp_svg
 
     Mapas.bloquearManzana(fracc)
@@ -168,23 +161,8 @@ const loader = {
           let option = document.createElement('option')
           option.value = i
           option.innerText = e
-          console.log('e')
-          console.log(e)
           select.appendChild(option)
-
-          // let html = ''
-          // html += `
-          //        <option value="0" disabled selected> Seleccione Monto de Enganche </option>
-          //        <option>${opcion.Enganche[0]}</option>
-          //        <option>${opcion.Enganche[1]}</option>
-          //        <option>${opcion.Enganche[2]}</option>
-          //       `
-          // select.innerHTML = html
         })
-        //carga Primer Mensualidad
-        // fraccPago.pagoPM.forEach((opcion) => {
-        // inputPM.value = `Pago de primer mensualidad: ${fraccPago.pagoPM}`
-        // })
       })
   },
   mapEvent() {
@@ -197,26 +175,18 @@ const loader = {
 
     mapa.addEventListener('click', async (e) => {
       if (e.target.matches('[data-manzana]')) {
-        // const manzana = e.target.id
         let auxManzana = e.target.id.split('-')
         const manzana = auxManzana[0]
-        /*posicionY = e.pageY;
-                posicionX = e.pageX;*/
         const svgNombre = e.target.closest('svg').dataset.desarrollo
-        const fraccionamiento =
-          document.getElementById('nombre-desarrollo').textContent
-        console.log(fraccionamiento, manzana)
+        const fraccionamiento = document.getElementById('nombre-desarrollo').textContent
         await Mapas.loadManzana(svgNombre, manzana, fracc)
-        // Mapas.bloquearManzana(fracc)
         Mapas.getDisponiblidad(fraccionamiento, manzana)
-        // console.log()
       }
     })
 
     mapa.addEventListener('click', (e) => {
       if (e.target.matches('[data-lote]')) {
         loteSeleccionado = e
-        console.log("Lote: "+ loteSeleccionado)
         if(e.target.dataset.disponible == "true")
         {
           Login.viewModal(true, e.target.id)
@@ -236,8 +206,7 @@ const loader = {
         lote.textContent = e.target.id
         toolTip.appendChild(lote)
         let dimension = document.createElement('p')
-        dimension.textContent =
-          'Dimension: ' + e.target.dataset.dimension + ' m2'
+        dimension.textContent = 'Dimension: ' + e.target.dataset.dimension + ' m2'
         toolTip.appendChild(dimension)
         let costoMetro = document.createElement('p')
         costoMetro.textContent = 'Costo M2: $ ' + e.target.dataset.costom2

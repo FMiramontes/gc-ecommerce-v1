@@ -3,6 +3,7 @@
 import Zoho from './zoho.js'
 import Loader from './loader.js'
 import { loteSeleccionado } from './loader.js'
+import { showAlert } from './alertas.js'
 
 // add login
 const modal = document.getElementById('modal')
@@ -33,13 +34,13 @@ const login = {
                 <button type="button" class="submit-btn" id="iniciar-sesion">Iniciar Sesión</button>
                 <span id="error"></span>
             </form>
-            <form id="registro" class="input-group">
-                <input type="text" class="input-field" placeholder="Nombre(s)" required>
-                <input type="text" class="input-field" placeholder="Apellidos" required>
-                <input type="tel" class="input-field" placeholder="Telefono" required>
-                <input type="email" class="input-field" placeholder="Correo Electrónico" required>
-                <input type="password" class="input-field" placeholder="Contraseña" required>
-                <input type="password" class="input-field" placeholder="Confirmar Contraseña" required>
+            <form id="registro" class="input-group" >
+                <input name="fist-name" type="text" class="input-field" placeholder="Nombre(s)" required>
+                <input name="last-name" type="text" class="input-field" placeholder="Apellidos" required>
+                <input name="phone" type="tel" class="input-field" placeholder="Telefono" required>
+                <input name="email" type="email" class="input-field" placeholder="Correo Electrónico" required>
+                <input name="password" type="password" class="input-field" placeholder="Contraseña" required>
+                <input name="re-password" type="password" class="input-field" placeholder="Confirmar Contraseña" required>
                 <button type="submit" class="submit-btn" id="registrar-usuario">Registrar</button>
             </form>
         </div>
@@ -60,6 +61,14 @@ const login = {
       this.login(pay)
     })
 
+    let registrarUsuario = document.getElementById('registrar-usuario')
+    registrarUsuario.addEventListener('click', async (e) => {
+      e.preventDefault()
+
+      const logOn = await this.logOn(pay, e.target.form)
+      console.log(logOn)
+    })
+
     // evento login/registro
     let btnIniciar = document.getElementById('btn-iniciar') // iniciar sesion formulario (arriba)
     let btnRegistrar = document.getElementById('btn-registrar') // registrar formulario
@@ -73,7 +82,7 @@ const login = {
 
     return true
   },
-  innerPay: () => {
+  innerPay(){
     modal.innerHTML = ' '
     modal.innerHTML = `
         <form class="pay-form">
@@ -99,7 +108,7 @@ const login = {
                 </select>
             </div>            
                 <div class="element">                          
-                    <button type="submit" id="btn-enviar" class="enviar">Enviar</button>
+                    <button type="submit" id="btn-enviar" class="enviar" >Enviar</button>
                 </div>
                 <div class="element">
                     <button type="submit" id="btn-cancelar" class="cancelar">Cancelar</button>
@@ -123,6 +132,7 @@ const login = {
       const producto = document.getElementById(item)
       const estaCRM = producto.dataset.crm
       if (estaCRM == 'true') {
+        // productID = producto.dataset.id
         productID = item
       } else {
         productID = item
@@ -143,16 +153,27 @@ const login = {
         montoEnganche = modal.querySelector('#monto-enganche').value
         console.log(montoEnganche)
       }
-      const request = await Zoho.createInvoice(
+      const request = await Zoho.createLead(
         productID,
         fraccIndex,
-        esEnganche,
-        montoEnganche
+        esEnganche
       )
+      
+      // Alerta
+      if ( request.success == true )
+      {
+        console.log("message", request.message )
+        this.viewModal(false)
+        showAlert('success', 'Envio Exitoso')
+      } 
+    
+    })
 
-      console.log(request)
-
-      console.log(e)
+    const cancel = document.getElementById('btn-cancelar')
+    cancel.addEventListener('click', async (e) => {
+      e.preventDefault()
+      login.viewModal(false)
+      login.innerPay()
     })
     return true
   },
@@ -202,6 +223,13 @@ const login = {
     c.style.left = '0px'
     loginForms.classList = 'login-forms-login'
   },
+  validPassword(password, re_password){
+    if( re_password === password) {
+      if ( password.length < 8 ) return true
+    }
+
+    return false
+  },
   login(pay) {
     console.log('Login: ' + pay)
     let email = document.getElementById('correo')
@@ -231,11 +259,56 @@ const login = {
           this.ocultarError()
           return false
         } else {
-          this.iniciar(pay)
+          this.iniciar(pay, res.name, email)
           document.getElementById('')
           return true
         }
       })
+  },
+  async logOn(pay, form) {
+    console.log('LogOn: ' + pay)
+    const first_name = form[0].value
+    const last_name = form[1].value
+    const phone = parseInt( form[2].value )
+    const email = form[3].value
+    const password = form[4].value
+    const re_password = form[5].value
+
+    const name = first_name + " " +last_name
+
+    const valid_password = this.validPassword(password, re_password)
+
+    if( !valid_password ) return "Invalid password"
+
+    let body = { name, first_name, last_name, email, password,  phone, }
+
+    console.log("body - ",body)
+
+    fetch('/server/ecommerce/auth/sign-on', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    })
+      .then((data) => data.json())
+      .then((res) => {
+        if (res.code != 0) {
+          console.log('No LogOn !!')
+          first_name.value = ' '
+          last_name.value = ' '
+          email.value = ' '
+          phone.value = ' '
+          password.value = ' '
+          re_password.value = ' '
+          return false
+        } else {
+          this.iniciar(pay, name, email)
+          document.getElementById('')
+          return true
+        }
+      })
+    
   },
   logout() {
     const loagout = fetch('/server/ecommerce/auth/sign-out', {
@@ -244,16 +317,15 @@ const login = {
         'Content-Type': 'application/json',
       },
     })
-    console.log(loagout)
     sessionStorage.removeItem('usuario')
     sessionStorage.removeItem('correo')
     sessionStorage.removeItem('sesion')
     this.innerLogin(type)
     this.mostrarBoton()
   },
-  iniciar(pay) {
-    sessionStorage.setItem('usuario', 'Fernanda')
-    sessionStorage.setItem('correo', document.getElementById('correo').value)
+  iniciar(pay, name, email) {
+    sessionStorage.setItem('usuario', name)
+    sessionStorage.setItem('correo', email)
     sessionStorage.setItem('sesion', true)
     this.mostrarBoton()
     this.viewModal(false)

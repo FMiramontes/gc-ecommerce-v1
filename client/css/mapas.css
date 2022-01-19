@@ -44,6 +44,7 @@ tspan{
   position: relative;
   top: calc(30vh - 75px);
   left: calc(3vw - 75px);
+  z-index: 1;
 }
 .brujula svg{
   width: 10%;

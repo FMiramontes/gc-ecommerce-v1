@@ -1,16 +1,23 @@
 const zoho = {
-  createInvoice: async (item, position, esEnganche, select) => {
+  getFraccionamiento: async (desarrollo) => {
+    try {
+      const Fraccionamento = await fetch(`/server/ecommerce/catalyst/getFraccionamiento/${desarrollo}`)
+      let aux = await Fraccionamento.json()
+      return aux
+    } catch (error) {
+      return error
+    }
+  },
+  createLead: async (item, position, esEnganche) => {
     try {
       const parsePos = Number(position)
-      const parseSel = Number(select)
       const data = {
         item,
         position: parsePos,
-        esEnganche,
-        select: parseSel,
+        esEnganche
       }
       console.log(JSON.stringify(data))
-      const comprobar = await fetch(`/server/ecommerce/books/createFactura`, {
+      const comprobar = await fetch(`/server/ecommerce/books/createLead`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -22,15 +29,6 @@ const zoho = {
       console.log(res)
 
       return res
-    } catch (error) {
-      return error
-    }
-  },
-  getFraccionamiento: async (desarrollo) => {
-    try {
-      const Fraccionamento = await fetch(`/server/ecommerce/catalyst/getFraccionamiento/${desarrollo}`)
-      let aux = await Fraccionamento.json()
-      return aux
     } catch (error) {
       return error
     }

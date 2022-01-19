@@ -3,8 +3,7 @@
 let containerMapa = document.getElementById('mapa-interactivo')
 const preloader = document.getElementById('preloader-bg');
 let zoom = 1
-// const Name_frac = document.getElementById('nombre-desarrollo').textContent
-// const fracc = await Zoho.getFraccionamiento( Name_frac )
+
 export function zoomIn (){
   const btnZoom = document.getElementById('zoom')
   btnZoom.addEventListener('click',() =>{
@@ -58,10 +57,9 @@ const mapa = {
     const request = await fetch(
       `/server/ecommerce/crm/getDisponibilidad/${fraccionamiento}/${manzana}`
     )
-    //   const data = await request.json()
 
     const data = await request.json()
-    console.log(data)
+
     this.poblarLotificacion( await data.data)
   },
   poblarLotificacion(disponibilidad){
@@ -88,10 +86,8 @@ const mapa = {
       try {
         let lote = ''
         if( product.Lote_Letra == null){
-          console.log(`M${product.Manzana}-L${product.Lote}`)
           lote = document.getElementById(`M${product.Manzana}-L${product.Lote}`)
         }else{
-          console.log(`M${product.Manzana}-L${product.Lote + product.Lote_Letra}`)
           lote = document.getElementById(`M${product.Manzana}-L${product.Lote + product.Lote_Letra}`)
         }
         
@@ -107,12 +103,10 @@ const mapa = {
           lote.style.fill = '#2e2e2e'
           lote.style.stroke = '#000'
           lote.removeAttribute('onclick')
-          console.log("red")
           lote.dataset.disponible = false
         } else if (product.Estado == "Disponible") {
           lote.style.fill = '#de9f27'
           lote.style.stroke = '#000'
-          console.log("orange")
           lote.dataset.disponible = true
         }
       } catch (err) {

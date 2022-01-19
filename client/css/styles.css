@@ -436,15 +436,23 @@
     
     
     /* Flecha navegacion */
-    .arriba{
-        display: inline-block;
-        padding:20px;
-        cursor:pointer;
+    .btn-scrolltop {
         position: fixed;
-        bottom:20px;
-        right:20px;
-        z-index: 10;
-    }
+        bottom: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        color: #DE9F27;
+        border: 2px solid #DE9F27;
+        background: transparent;
+        border-radius: 100%;
+        cursor: pointer;
+        transform: translateY(100px);
+        transition: all 0.5s ease-out;
+      }
+      .btn-scrolltop-on {
+        transition: all 0.5s ease-out;
+        transform: translateY(0);
+      }
     /* Carrusel*/  
     .slider {
         width: 100%;
@@ -547,90 +555,75 @@
     }
       
     /* Alertas */
-    
-    #toast, #toast2, #toast3{
-        width: 380px;
-        height: 90px;
-        padding: 10px;
-        background-color: #ffffff;
-        box-shadow: 0 10px 20px rgba(75, 50, 50, 0.05);
-        border-radius: 7px;
-        display: grid;
-        grid-template-columns: 1.2fr 6fr 0.5fr;
-        transform: translate(400px); 
-        transition: 1s;
-        top: 95px; 
-        right: 0;
-        overflow: hidden;
+    .alert {
+        margin: 10px;
+        display: none;
         position: fixed;
+        top: 45px;
+        right: -450px;
+        width: 400px;
+        padding: 10px;
+        color: #fff;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-left: 12px solid #505050;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        transition: right 0.5s ease;
         z-index: 1;
     }
     
-    .success{
-        border-left: 8px solid #47f764;
+    .alert .message {
+        line-height: 35px;
+        font-size: 14px;
+        font-weight: 450;
+        padding-left: 5px;
     }
     
-    .success i{
-        color: #47f764;
+    .alert span {
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        color: #000;
+        transition: transform 0.2s ease;
     }
     
-    .warning i{
-        color: #ff355b;
-    }
-    .error, .warning{
-        border-left: 8px solid #ff355b;
-    }
-    
-    .error i{
-        color: #ff355b;
-    }
-    .container-1 i{
-    font-size: 35px;
-    }
-    
-    
-    .container-1, .container-2{
-    align-self:center;
-    }
-    
-    .container-2 p:first-child{
-        font-size: 16px;
-        color: #101020;
-        font-weight:600;
-    }
-    .container-2 p:last-child{
-        font-size: 12px;
-        font-weight: 400;
-        color: #656565;
-    }
-    
-    #toast, #toast2, #toast3 button{
-    align-self:  flex-start;
-    background-color:transparent;
-    border: none;
-    font-size: 25px;
-    line-height: 0;
-    cursor:pointer;
-    color: #656565;
-    }
-    
-    .seleccion-btn{
-        color:#fff;
-        font-size:15px;
-        font-weight: 500;
-        border: none;
-        background: #DE9F27;
-        transition: all 1s ease;
-        border-radius:5px;
-        padding: 0.5em 1.2em;
+    .alert span:hover {
         cursor: pointer;
-        margin: 20px;
-        height: 46px;
-    }
-    .seleccion-btn:hover{
-        background-color: #000;
+        transform: scale(1.2);
     }
     
+    .alert.success {
+        background-color: #fff;
+        border-left-color: #72a75b;
+        color: #000;
+    }
+    .alert.success h2{
+        color: #72a75b;
+    }
+    
+    .alert.warning {
+        background-color: #fff;
+        border-left-color: #FFE162;
+        color: #000;
+    }
+    .alert.warning h2{
+        color: #FFBD35;
+    }
+    .alert.danger {
+        background-color: #fff;
+        border-left-color: #c73a3a;
+        color: #000;
+    }
+    .alert.danger h2{
+        color: #c73a3a;
+    }
+
+    .alert.show {
+        top: 45px;
+        right: 10px;
+    }
+    
+    /* tooltip lote */   
     #info-lote {
         width: 200px;
         padding: 20px;
