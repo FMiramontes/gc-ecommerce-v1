@@ -2,175 +2,202 @@ const axios = require('axios')
 const jwt = require('jsonwebtoken')
 const catalyst = require('zcatalyst-sdk-node')
 const catalystToken = require('../catalysToken')
-const { desk, cliq } = require('../controllers/zoho')
+const { desk, cliq, cache } = require('../controllers/zoho')
 const crm = require('../controllers/crm')
 
 const util = {
-  getSeccion(data){
+  getSeccion(data) {
     let secciones_array = JSON.parse(data.secciones)
-          secciones_array.forEach((e) => {
+    secciones_array.forEach((e) => {
 
-            if (manzana >= e.init && manzana <= e.end) {
-              if (e.Lotes != null && manzana == e.end) {
-                if (tempLote >= e.Lotes.init && tempLote <= e.Lotes.end) {
-                  item_name = data.code + ' ' + e.name + ' ' + item
-                  sku = name_array2[0] + "" + e.symbol + "" + name_array2[1]
-                  Fraccionamiento = e.id.toString()
-                  if (e.name) {
-                    nombre_fracionamiento = data.Fraccionamiento + " " + e.name
-                  } else {
-                    nombre_fracionamiento = data.Fraccionamiento
-                  }
-                }
-              } else {
-                item_name = data.code + ' ' + e.name + ' ' + item
-                sku = name_array2[0] + "" + e.symbol + "" + name_array2[1]
-                Fraccionamiento = e.id.toString()
-                if (e.name) {
-                  nombre_fracionamiento = data.Fraccionamiento + " " + e.name
-                } else {
-                  nombre_fracionamiento = data.Fraccionamiento
-                }
-
-              }
+      if (manzana >= e.init && manzana <= e.end) {
+        if (e.Lotes != null && manzana == e.end) {
+          if (tempLote >= e.Lotes.init && tempLote <= e.Lotes.end) {
+            item_name = data.code + ' ' + e.name + ' ' + item
+            sku = name_array2[0] + "" + e.symbol + "" + name_array2[1]
+            Fraccionamiento = e.id.toString()
+            if (e.name) {
+              nombre_fracionamiento = data.Fraccionamiento + " " + e.name
+            } else {
+              nombre_fracionamiento = data.Fraccionamiento
             }
-          })
+          }
+        } else {
+          item_name = data.code + ' ' + e.name + ' ' + item
+          sku = name_array2[0] + "" + e.symbol + "" + name_array2[1]
+          Fraccionamiento = e.id.toString()
+          if (e.name) {
+            nombre_fracionamiento = data.Fraccionamiento + " " + e.name
+          } else {
+            nombre_fracionamiento = data.Fraccionamiento
+          }
+
+        }
+      }
+    })
   },
-} 
+}
 
 const books = {
-    // createTicket: async (req, res) => {
-    //   // console.log("Work !!")
-    //   try {
-        
-      
-    //     const accessToken = await catalystToken(req)
+  // createTicket: async (req, res) => {
+  //   // console.log("Work !!")
+  //   try {
 
-    //     const subject = "Mensaje de prueba web"
 
-    //     const message = "Esto es una prueb de GC-Ecommerce"
+  //     const accessToken = await catalystToken(req)
 
-    //     const resp = await desk.createTicket( subject, message ,accessToken)
+  //     const subject = "Mensaje de prueba web"
 
-    //     if( resp.code == 500 ) console.log("error - ", resp.error )
+  //     const message = "Esto es una prueb de GC-Ecommerce"
 
-    //     console.log("message - ", resp.message )
+  //     const resp = await desk.createTicket( subject, message ,accessToken)
 
-    //     res.status(resp.code).send({ message: resp.message, success: resp.success})
+  //     if( resp.code == 500 ) console.log("error - ", resp.error )
 
-    //   } catch (error) {
-    //       console.log(error)
-    //   }
+  //     console.log("message - ", resp.message )
 
-    // },
-    createLead: async (req, res)  => {
-      try {
-        const accessToken = await catalystToken(req)
-        const app = catalyst.initialize(req)
-        //Check for session
-        if (!req.session.login) res.status(401).send({ code: 401, message: 'Invalid user' })
+  //     res.status(resp.code).send({ message: resp.message, success: resp.success})
 
-        // Decode jwt
-        const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET)
+  //   } catch (error) {
+  //       console.log(error)
+  //   }
 
-        // Search for user in DB
-        let query_user = `SELECT * FROM users WHERE users.ROWID = '${decoded.idUser}'`;
-        
-        let zcql = app.zcql()
-        let user = await zcql.executeZCQLQuery(query_user);
-        if (user.length == 0) res.status(401).send({ code: 401, message: "User not found !!" })
+  // },
+  createLead: async (req, res) => {
+    try {
+      const accessToken = await catalystToken(req)
+      const app = catalyst.initialize(req)
+      //Check for session
+      if (!req.session.login) return res.status(401).send({ code: 401, message: 'Invalid user' })
 
-        
+      // Decode jwt
+      const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET)
 
-        // User
-        let first_name = user[0].users.first_name
-        let last_name = user[0].users.last_name
-        let phone = user[0].users.phone
-        let email = user[0].users.email
+      // Search for user in DB
+      let query_user = `SELECT * FROM users WHERE users.ROWID = '${decoded.idUser}'`;
 
-        let name = first_name +" "+last_name
+      let zcql = app.zcql()
+      let user = await zcql.executeZCQLQuery(query_user);
+      if (user.length == 0) return res.status(401).send({ code: 401, message: "User not found !!" })
 
-        // Start of proccess
-        const { item, position, esEnganche } = req.body
 
-        let query = `SELECT * FROM fraccionamientos`
-        let query_fraccionamiento = await zcql.executeZCQLQuery(query)
 
-        if (query_fraccionamiento.length == 0) res.status(404).send({ code: 404, message: "Block not found !!" })
+      // User
+      let first_name = user[0].users.first_name
+      let last_name = user[0].users.last_name
+      let phone = user[0].users.phone
+      let email = user[0].users.email
 
-        data = query_fraccionamiento[position].fraccionamientos
+      let name = first_name + " " + last_name
 
-        let Product_Name = data.Fraccionamiento +" "+ item
+      // Start of proccess
+      const { item, position, esEnganche } = req.body
 
-        const tipoDePolitica = esEnganche ? 'Enganche' : 'Primer Mensualidad'
-        let leadCreated = false
-        let isContact = true
-        let message = ''
+      let query = `SELECT * FROM fraccionamientos`
+      let query_fraccionamiento = await zcql.executeZCQLQuery(query)
 
-        // If Contact
-        const searchContact = await crm.searchContact(email, accessToken)
-        if(!searchContact.success){
-          // Contact not found
-          isContact = false
-          // If Lead
-          const searchLead = await crm.searchLead(email, accessToken)
-          console.log("searchLead - ",searchLead)
-          if(!searchLead.success){
-            // Create Lead
-            console.log("Creando Lead")
-            const createLead = await crm.createLead(first_name, last_name, email, phone, accessToken)
-            console.log("createLead - ", createLead)
-            if(createLead.success){
-              leadCreated = true
-            }
-            
-            // throw new Error('Lead not created')
+      if (query_fraccionamiento.length == 0) return res.status(404).send({ code: 404, message: "Block not found !!" })
+
+      data = query_fraccionamiento[position].fraccionamientos
+
+      let Product_Name = data.Fraccionamiento + " " + item
+
+      const tipoDePolitica = esEnganche ? 'Enganche' : 'Primer Mensualidad'
+      let leadCreated = false
+      let isContact = true
+      let message = ''
+
+      // If Contact
+      const searchContact = await crm.searchContact(email, accessToken)
+      if (!searchContact.success) {
+        // Contact not found
+        isContact = false
+        // If Lead
+        const searchLead = await crm.searchLead(email, accessToken)
+        console.log("searchLead - ", searchLead)
+        if (!searchLead.success) {
+          // Create Lead
+          console.log("Creando Lead")
+          const createLead = await crm.createLead(first_name, last_name, email, phone, accessToken)
+          console.log("createLead - ", createLead)
+          if (createLead.success) {
+            leadCreated = true
           }
+
+          // throw new Error('Lead not created')
         }
-
-        if(isContact){
-          message = `El contacto ${name} esta interesado en adquirir el terreno ${Product_Name}, con una politica de ${tipoDePolitica}. 
-            
-          Datos adicionales: 
-          ${email},
-          ${phone}
-          `;
-        }else{
-          message = `El Posible Cliente ${name} esta interesado en adquirir el terreno ${Product_Name}, con una politica de ${tipoDePolitica}. 
-            
-          Datos adicionales: 
-          ${email},
-          ${phone}
-          `;
-        }
-
-        console.log('isContact', isContact)
-        console.log('leadCreated', leadCreated)
-        console.log('message', message)
-
-
-        const resp = await desk.createTicket( `${name} interesado en adquirir ${Product_Name}`, message ,accessToken)
-
-        if( resp.code == 500 ) console.log("error - ", resp.error )
-
-        console.log("message - ", resp.message )
-
-        
-
-        res.status(resp.code).send({ message: resp.message, success: resp.success})
-
-        return {
-          code: 201,
-          success: true,
-          message: 'Ticked created.'
-        }
-      } catch (error) {
-        console.log(error)
       }
-    }
- }
 
- module.exports = books
+      if (isContact) {
+        message = `El contacto ${name} esta interesado en adquirir el terreno ${Product_Name}, con una politica de ${tipoDePolitica}. 
+            
+          Datos adicionales: 
+          ${email},
+          ${phone}
+          `;
+      } else {
+        message = `El Posible Cliente ${name} esta interesado en adquirir el terreno ${Product_Name}, con una politica de ${tipoDePolitica}. 
+            
+          Datos adicionales: 
+          ${email},
+          ${phone}
+          `;
+      }
+
+      console.log('isContact', isContact)
+      console.log('leadCreated', leadCreated)
+      console.log('message', message)
+
+
+      const userCache = await cache.getCache(email, app)
+
+      console.log(userCache)
+
+
+
+      if (userCache !== null) {
+        // verifica si son menos de 5 
+        let lotes = JSON.parse(userCache)
+
+        if ( lotes.length >= 5 ) return res.status(400).send({message: 'You have reached the limit amount of tickets. Plese try again later.', success: false})
+    
+        const validCache = lotes.find((name) => name == Product_Name)
+
+        if ( validCache ) return res.status(403).send( { message: "Ticket already created", success: false } )
+
+      }
+      
+      // Create ticket
+      const resp = await desk.createTicket(`${name} interesado en adquirir ${Product_Name}`, message, accessToken)
+
+      if (resp.code == 500) console.log("error - ", resp.error)
+
+      console.log("message - ", resp.message)
+
+      if (userCache === null) {
+        // No tickets created yet
+        // create 
+        const createCache = await cache.createCache(email, Product_Name, app)
+        console.log('Creating cache', createCache)
+      }else{
+        // User has tickets created
+        // update
+        let lotes = JSON.parse(userCache)
+        lotes.push(Product_Name)
+
+        const updateCache = await cache.updateCache(email, JSON.stringify(lotes), app)
+        console.log('Updating cache', updateCache)
+      }
+
+      res.status(resp.code).send({ message: resp.message, success: resp.success })
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+}
+
+module.exports = books
 
 /*
 const crm = {

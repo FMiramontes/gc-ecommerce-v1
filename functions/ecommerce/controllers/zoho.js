@@ -1,5 +1,6 @@
 const axios = require('axios')
 const catalyst = require('zcatalyst-sdk-node')
+const jwt = require('jsonwebtoken')
 
 const cliq = {
     postToChannel: async (text, accessToken) => {
@@ -74,5 +75,34 @@ const desk = {
         }
     }
 }
+const cache = {
+    async getCache(key, app){
+        let cache = app.cache();
+        let segment = cache.segment(process.env.CACHE_ID);
+        let cachePromise = segment.getValue(key);
+        const userCache = await cachePromise
+        console.log(userCache)
+        return userCache
+    },
+    async createCache(key, lote, app){
+        let cache = app.cache();
+        let segment = cache.segment(process.env.CACHE_ID);
+        let cachePromise = segment.put(key, `["${lote}"]`);
+        const userCache = await cachePromise
+        console.log(userCache)
+        return userCache
+    },
+    async updateCache(key, lotes, app){
 
-module.exports = { cliq, desk }
+        console.log("lotes - ", lotes)
+
+        let cache = app.cache();
+        let segment = cache.segment(process.env.CACHE_ID);
+        let cachePromise = segment.update(key, lotes.toString() );
+        const userCache = await cachePromise
+        console.log(userCache)
+        return userCache
+    }
+}
+
+module.exports = { cliq, desk, cache }
