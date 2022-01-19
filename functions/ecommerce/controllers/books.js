@@ -2,7 +2,7 @@ const axios = require('axios')
 const jwt = require('jsonwebtoken')
 const catalyst = require('zcatalyst-sdk-node')
 const catalystToken = require('../catalysToken')
-// const { desk, cliq } = require('../controllers/zoho')
+const { desk, cliq } = require('../controllers/zoho')
 const crm = require('../controllers/crm')
 
 const util = {
@@ -39,6 +39,30 @@ const util = {
 } 
 
 const books = {
+    // createTicket: async (req, res) => {
+    //   // console.log("Work !!")
+    //   try {
+        
+      
+    //     const accessToken = await catalystToken(req)
+
+    //     const subject = "Mensaje de prueba web"
+
+    //     const message = "Esto es una prueb de GC-Ecommerce"
+
+    //     const resp = await desk.createTicket( subject, message ,accessToken)
+
+    //     if( resp.code == 500 ) console.log("error - ", resp.error )
+
+    //     console.log("message - ", resp.message )
+
+    //     res.status(resp.code).send({ message: resp.message, success: resp.success})
+
+    //   } catch (error) {
+    //       console.log(error)
+    //   }
+
+    // },
     createLead: async (req, res)  => {
       try {
         const accessToken = await catalystToken(req)
@@ -67,7 +91,7 @@ const books = {
         let name = first_name +" "+last_name
 
         // Start of proccess
-        const { item, position, esEnganche, select } = req.body
+        const { item, position, esEnganche } = req.body
 
         let query = `SELECT * FROM fraccionamientos`
         let query_fraccionamiento = await zcql.executeZCQLQuery(query)
@@ -123,6 +147,17 @@ const books = {
         console.log('isContact', isContact)
         console.log('leadCreated', leadCreated)
         console.log('message', message)
+
+
+        const resp = await desk.createTicket( `${name} interesado en adquirir ${Product_Name}`, message ,accessToken)
+
+        if( resp.code == 500 ) console.log("error - ", resp.error )
+
+        console.log("message - ", resp.message )
+
+        
+
+        res.status(resp.code).send({ message: resp.message, success: resp.success})
 
         return {
           code: 201,

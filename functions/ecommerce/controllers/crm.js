@@ -182,12 +182,14 @@ const crm = {
             return {
                 code: 201,
                 success: true,
+                message: 'Lead created',
                 lead_id : resp.data.data[0].id
             }
             } catch (error) {
                 return {
                     code: 500,
                     success: false,
+                    message: error.message,
                     error
                 }
         }

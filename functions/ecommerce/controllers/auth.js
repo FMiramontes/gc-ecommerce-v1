@@ -35,7 +35,7 @@ const auth = {
                     const token = await tokens.createToken(IDUser, req, res)
                     console.log(req.session)
                     // console.log(req.session)
-                    res.send({ message: "Login !!", code: 0 })
+                    res.send({ message: "Login !!", code: 0 , user_name: dataUser.name })
             }
         });
     },
@@ -184,6 +184,11 @@ const auth = {
             console.log("no work !!")
             console.log(error)
         }
+    },
+    register: async(req, res) => {
+        const body = req.body
+        console.log(body)
+        res.status(200).send(body)
     }
 
 }

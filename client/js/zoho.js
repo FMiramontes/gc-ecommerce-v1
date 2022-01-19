@@ -8,15 +8,13 @@ const zoho = {
       return error
     }
   },
-  createLead: async (item, position, esEnganche, select) => {
+  createLead: async (item, position, esEnganche) => {
     try {
       const parsePos = Number(position)
-      const parseSel = Number(select)
       const data = {
         item,
         position: parsePos,
-        esEnganche,
-        select: parseSel,
+        esEnganche
       }
       console.log(JSON.stringify(data))
       const comprobar = await fetch(`/server/ecommerce/books/createLead`, {

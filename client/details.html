@@ -157,50 +157,10 @@
     </div>
     <!--Burbuja -->
     <div id="info-lote" class="burbuja"> </div>
-    <!-- Alertas -->
-    <div class="wrapper">
-        <div id="toast" class="success">
-            <div class="container-1">
-                <i class="fas fa-check-square"></i>
-            </div>
-            <div class="container-2">
-                <p>Apartado Exitoso</p>
-                <p>Apartado Realizado Con Exito.</p>
-            </div>
-            <button id="close">&times;</button>
-        </div>
-        <div id="toast2" class="error">
-            <div class="container-1">
-                <i class="fas fa-times-circle"></i>
-            </div>
-            <div class="container-2">
-                <p>Apartado Sin Exito</p>
-                <p>Apartado Realizado Sin Exito.</p>
-            </div>
-            <button id="close-sin-exito">&times;</button>
-        </div>
-        <div id="toast3" class="warning">
-            <div class="container-1">
-                <i class="fas fa-exclamation-circle"></i>
-            </div>
-            <div class="container-2">
-                <p>Lo sentimos</p>
-                <p>Lote no disponible.</p>
-            </div>
-        </div>
-    </div>
     <!-- Flecha navegacion arriba -->
-    <span class="arriba">
-        <svg id="navegacion" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-up-circle"
-            width="40" height="40" viewBox="0 0 24 24" stroke-width="1.5" stroke="#DE9F27" fill="none"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <circle cx="12" cy="12" r="9" />
-            <line x1="12" y1="8" x2="8" y2="12" />
-            <line x1="12" y1="8" x2="12" y2="16" />
-            <line x1="16" y1="12" x2="12" y2="8" />
-        </svg>
-    </span>
+    <button class="btn-scrolltop" id="btn_scrolltop">
+        <i class="fas fa-chevron-up"></i>
+      </button>
     <!-- footer -->
     <footer class="footer tres-columnas">
         <div class="col-1">
@@ -243,18 +203,9 @@
         <div id="modal" class="popup-login"></div>
     </div>
 
-    <script src="./js/jquery.min.js"></script>
     <script src="./js/main.js" type="module"></script>
-    <script src="./js/navegacion.js" type="module"></script>
-    <!-- <script src="./js/details.js" type="module"></script>
-    <script src="./js/navegacion.js"></script>-->
-    <!-- <script src="./js/loader.js" type="module"></script> -->
-    <!-- <script src="./js/mapas.js" type="module"></script>  -->
-    <!-- <script src="./js/alertas.js" type="module"></script> -->
-    <!-- <script src="./js/login.js" type="module"></script>  -->
     <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom-container@0.5.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery-js/1.4.0/js/lightgallery.min.js"></script>
-    <!-- <script src="./js/mapas.js" type="module"></script> -->
 </body>
 
 </html>
