@@ -131,8 +131,17 @@ const loader = {
 
     // agrega mapa
     let mapa = document.getElementById('mapa-interactivo')
-    const desarrollo = frac.Fraccionamiento.toLowerCase().replace(' ', '-')
+    let desarrollo = frac.Fraccionamiento.toLowerCase().replace(' ', '-')
+    console.log("desarrollo", desarrollo)
 
+    if(desarrollo.includes('sección')){
+      let temp = desarrollo.split(' sección ')
+
+      console.log("temp ", temp)
+
+      desarrollo = temp[0] +""+ temp[1]
+    }
+    
     mapa.innerHTML = ''
     const loadPlano = await fetch(`./desarrollos/${desarrollo}/plano.svg`)
     // const loadPlano = await fetch('https://grupoconcordia.com/paginawebimg/plano.svg')
@@ -180,7 +189,13 @@ const loader = {
         let auxManzana = e.target.id.split('-')
         const manzana = auxManzana[0]
         const svgNombre = e.target.closest('svg').dataset.desarrollo
-        const fraccionamiento = document.getElementById('nombre-desarrollo').textContent
+        let fraccionamiento = document.getElementById('nombre-desarrollo').textContent
+
+        if(fraccionamiento.includes('Sección')){
+          let temp = fraccionamiento.split(' Sección ')
+          fraccionamiento = temp[0] +""+ temp[1]
+        }
+
         await Mapas.loadManzana(svgNombre, manzana, fracc)
         Mapas.getDisponiblidad(fraccionamiento, manzana)
       }
