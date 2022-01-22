@@ -1,7 +1,8 @@
     /* General */
     html {
         box-sizing: border-box;
-        font-size: 62.5%; 
+        font-size: 62.5%;
+        scroll-behavior: smooth;
     }
     .descripcion{
         font-size: large;
@@ -30,10 +31,21 @@
         margin-top: 15px;
         width: 200px;
     }
-    .menu{
+    .menu-index{
         width: 100%;
+        height: 15%;
         padding: 3rem;
-        background-color: #000;
+        background: #000;
+        display: flex;
+        background: linear-gradient(to top,rgba(8, 7, 7, 0), rgba(10, 2, 2, 0.774));
+        justify-content: space-between;
+    }
+    .menu-details{
+        position: absolute;
+        width: 100%;
+        height: 40%;
+        padding: 3rem;
+        background: linear-gradient(to top,rgba(8, 7, 7, 0), rgba(10, 2, 2, 0.596));
         display: flex;
         justify-content: space-between;
     }
@@ -55,12 +67,13 @@
         height: 5px;
         background-color: #DE9F27;
         margin-bottom: 15px;
+
     }
     .division-mapa{
         width: 27%;
         height: 5px;
         background-color: #DE9F27;
-        margin-bottom: 15px;
+        /* margin-bottom: 15px; */
     }
     .contenedor {
         width: 80%;
@@ -129,8 +142,10 @@
     }
     .desarrollo img{
         width: 100%;
-        height: 251px;
+        height: 100%;
+        image-rendering: pixelated;
     }
+    
     
     @media (min-width: 769px){
         
@@ -225,7 +240,6 @@
         font-family:Inter;
         font-size: medium;
         margin-top: 30px;
-        /* margin-bottom: 80px; */
     }
     
     .servicios-amenidades h2{
@@ -313,7 +327,6 @@
         display: grid;
         grid-template-columns: repeat(3, 1fr); 
         justify-content: center;
-        /* width:90%; */
         margin: 30px auto;
     }
     
@@ -350,6 +363,7 @@
     
     /* Mapa */
     .contenedor-mapa{
+        position: relative;
         display: flex;
         flex-direction: column;
         padding: 15px;
@@ -363,7 +377,6 @@
         border-radius: 11px;
         box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
         background-color: #043125;
-        margin-top: -200px;
     }
     
     
@@ -378,6 +391,7 @@
        display: flex;
        justify-content: center;
        align-items: center;
+       z-index: 1;
       }  
       .zoom-flex{
         display: flex;
@@ -390,29 +404,25 @@
         color: #fff;
     }   
       .btnz:hover {
-        /* background: #f3f3f3; */
         border-color: #de9f27;
         cursor: pointer;
       }
     
     /* Div detalles mapa */
-    .detalles-mapa{
+    .detalles-mapa{ 
+        width: 95%;
+        position: absolute;
         display: flex;
         justify-content: space-between;
-        position:relative;
-        top: calc(20vh - 75px);
+        /* position:relative;
+        top: calc(20vh - 75px); */
         align-items: center;
         margin: 0% 2% ;
-        z-index: 1;
+        top: 5%; 
     }
     @media(max-width:480px){
         .detalles-mapa{
-            top: calc(11vh - 75px);
-          }
-    }
-    @media screen and (min-width:481px) and (max-width:768px){
-        .detalles-mapa{
-            top: calc(18vh - 75px);
+            width: 90%;
           }
     }
     
@@ -423,6 +433,7 @@
         border-radius: 15px;
         padding: 20px;
         padding-right: 45px;
+        z-index: 1;
     }
     .disponibilidad-mapa{
         font-size:15px; 
@@ -447,15 +458,15 @@
         border-radius: 100%;
         cursor: pointer;
         transform: translateY(100px);
-        transition: all 0.5s ease-out;
+        transition: 0.3s;
       }
       .btn-scrolltop-on {
-        transition: all 0.5s ease-out;
         transform: translateY(0);
       }
     /* Carrusel*/  
     .slider {
         width: 100%;
+        height: 100vh;
         margin: auto;
         overflow: hidden;
       }
@@ -472,7 +483,8 @@
       }
       .slider img {
         width: 100vw;
-        height: 90vh;
+        height: 100vh;
+        border:0;
         image-rendering: pixelated;
       }
       
@@ -553,9 +565,20 @@
     .info-product{
         padding: 15px 20px;
     }
+    #info-lote {
+        width: 200px;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        font-size: 10pt;
+        background-color:rgb(88, 80, 80);
+        color:#fff;
+        border-radius: 8px;
+        position: absolute;
+        display: none;
+      }
       
     /* Alertas */
-    .alert {
+      .alert {
         margin: 10px;
         display: none;
         position: fixed;
@@ -622,19 +645,7 @@
         top: 45px;
         right: 10px;
     }
-    
-    /* tooltip lote */   
-    #info-lote {
-        width: 200px;
-        padding: 20px;
-        font-family: Arial, sans-serif;
-        font-size: 10pt;
-        background-color:rgb(88, 80, 80);
-        color:#fff;
-        border-radius: 8px;
-        position: absolute;
-        display: none;
-      }
+
      
     /* Media Querie Movil */
     @media only screen and (min-device-width: 218px) and (max-device-width: 768px) {

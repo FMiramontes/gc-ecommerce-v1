@@ -68,7 +68,7 @@ const books = {
       const accessToken = await catalystToken(req)
       const app = catalyst.initialize(req)
       //Check for session
-      if (!req.session.login) return res.status(401).send({ code: 401, message: 'Invalid user' })
+      if (!req.session.login) return res.status(401).send({ code: 401, type: 'warning', message: 'Invalid user' })
 
       // Decode jwt
       const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET)
@@ -78,7 +78,7 @@ const books = {
 
       let zcql = app.zcql()
       let user = await zcql.executeZCQLQuery(query_user);
-      if (user.length == 0) return res.status(401).send({ code: 401, message: "User not found !!" })
+      if (user.length == 0) return res.status(401).send({ code: 401, type: 'warning', message: "User not found !!" })
 
 
 
@@ -96,7 +96,7 @@ const books = {
       let query = `SELECT * FROM fraccionamientos`
       let query_fraccionamiento = await zcql.executeZCQLQuery(query)
 
-      if (query_fraccionamiento.length == 0) return res.status(404).send({ code: 404, message: "Block not found !!" })
+      if (query_fraccionamiento.length == 0) return res.status(404).send({ code: 404, type: 'warning', message: "Block not found !!" })
 
       data = query_fraccionamiento[position].fraccionamientos
 
@@ -163,7 +163,7 @@ const books = {
     
         const validCache = lotes.find((name) => name == Product_Name)
 
-        if ( validCache ) return res.status(403).send( { message: "Ticket already created", success: false } )
+        if ( validCache ) return res.status(403).send( {code: 403, type: 'danger', message: "Ticket already created"} )
 
       }
       
@@ -188,8 +188,14 @@ const books = {
         const updateCache = await cache.updateCache(email, JSON.stringify(lotes), app)
         console.log('Updating cache', updateCache)
       }
+      let type = ''
 
-      res.status(resp.code).send({ message: resp.message, success: resp.success })
+      if ( resp.success ) type = 'success'
+      if ( !resp.success ) type = 'danger'
+
+      
+
+      res.status(resp.code).send({ code: resp.code, type: type, message: resp.message })
 
     } catch (error) {
       console.log(error)
@@ -806,6 +812,14 @@ module.exports = books2
       { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 107, "end": 109, "Lotes": null },
       { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 111, "end": 112, "Lotes": null },
       { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 196, "end": 199, "Lotes": null }
+      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 200, "end": 206, "Lotes": null }
+      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 208, "end": 208, "Lotes": null }
       
+    ]
+
+    [
+      { "id": "2234337000006131928", "name": "Villa Toscana", "symbol": "-", "init": 21, "end": 34, "Lotes": null },
+      { "id": "2234337000006131928", "name": "Villa Toscana", "symbol": "-", "init": 36, "end": 42, "Lotes": null },
+      { "id": "2234337000006131928", "name": "Villa Toscana", "symbol": "-", "init": 46, "end": 54, "Lotes": null }
     ]
 */

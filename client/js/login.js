@@ -7,7 +7,7 @@ import { showAlert } from './alertas.js'
 
 // add login
 const modal = document.getElementById('modal')
-const nombreUsuario = document.getElementById('nombre-usuario')
+// const nombreUsuario = document.getElementById('nombre-usuario')
 const body = document.getElementsByTagName('body')
 let type = body[0].dataset.type
 let loginForms, c
@@ -66,6 +66,7 @@ const login = {
       e.preventDefault()
 
       const logOn = await this.logOn(pay, e.target.form)
+      showAlert(logOn.type, logOn.message)
       console.log(logOn)
     })
 
@@ -82,7 +83,7 @@ const login = {
 
     return true
   },
-  innerPay(){
+  innerPay() {
     modal.innerHTML = ' '
     modal.innerHTML = `
         <form class="pay-form">
@@ -115,11 +116,11 @@ const login = {
                 </div>
         </form>
         `
-      // Check enganche
-      const checkEn = document.getElementById('checkEnganche')
-      checkEn.addEventListener('click', (e) =>{
-        login.MostrarDiv(e.target)
-      })
+    // Check enganche
+    const checkEn = document.getElementById('checkEnganche')
+    checkEn.addEventListener('click', (e) => {
+      login.MostrarDiv(e.target)
+    })
     //Obtener boton send
     const send = document.getElementById('btn-enviar')
     send.addEventListener('click', async (e) => {
@@ -158,15 +159,24 @@ const login = {
         fraccIndex,
         esEnganche
       )
-      
-      // Alerta
-      if ( request.success == true )
-      {
-        console.log("message", request.message )
-        this.viewModal(false)
-        showAlert('success', 'Envio Exitoso')
-      } 
-    
+
+      this.viewModal(false)
+      showAlert(request.type, request.message)
+
+      // if( request.code == 401 ){
+      //   this.viewModal(false)
+      //   showAlert('success', 'Envio Exitoso')
+      // }
+
+      // // Alerta
+      // if ( request.success == true )
+      // {
+      //   console.log("message", request.message )
+      //   this.viewModal(false)
+      //   showAlert('success', request.message)
+
+      // } 
+
     })
 
     const cancel = document.getElementById('btn-cancelar')
@@ -187,7 +197,7 @@ const login = {
     mensualidad.style.display = checkEnganche.checked ? "none" : "block"
   },
 
-  mostrarInfoLote : (loteSeleccionado) =>{
+  mostrarInfoLote: (loteSeleccionado) => {
     const info = document.getElementById('info-product')
     const trato = document.createElement('P');
     const dimension = document.createElement('P');
@@ -201,7 +211,7 @@ const login = {
     info.appendChild(costo);
     total.textContent = 'Total: $' + loteSeleccionado.target.dataset.costototal;
     info.appendChild(total);
-    
+
   },
   viewModal: (view, id) => {
     let container_modal = document.getElementById('container-modal')
@@ -223,14 +233,14 @@ const login = {
     c.style.left = '0px'
     loginForms.classList = 'login-forms-login'
   },
-  validPassword(password, re_password){
-    if( re_password === password) {
-      if ( password.length < 8 ) return true
+  validPassword(password, re_password) {
+    if (re_password === password) {
+      if (password.length < 8) return true
     }
 
     return false
   },
-  login(pay) {
+  async login(pay) {
     console.log('Login: ' + pay)
     let email = document.getElementById('correo')
     let password = document.getElementById('contrase_a')
@@ -241,74 +251,82 @@ const login = {
       password: password.value,
     }
 
-    fetch('/server/ecommerce/auth/sign-in', {
+    let data = await fetch('/server/ecommerce/auth/sign-in', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
     })
-      .then((data) => data.json())
-      .then((res) => {
-        if (res.code != 0) {
-          console.log('No Login !!')
-          email.value = ' '
-          password.value = ' '
-          Msg.innerText = 'Usuario y/o contraseña incorrectos'
-          Msg.style.display = 'block'
-          this.ocultarError()
-          return false
-        } else {
-          this.iniciar(pay, res.name, email)
-          document.getElementById('')
-          return true
-        }
-      })
+
+    let res = await data.json()
+
+    console.log(res)
+
+    showAlert(res.type, res.message)
+
+    if (res.code != 201) {
+      console.log('No Login !!')
+      email.value = ''
+      password.value = ''
+      Msg.innerText = 'Usuario y/o contraseña incorrectos'
+      Msg.style.display = 'block'
+      this.ocultarError()
+      return false
+    } else {
+      this.iniciar(pay, res.name, email)
+      document.getElementById('')
+
+      return true
+    }
   },
   async logOn(pay, form) {
     console.log('LogOn: ' + pay)
     const first_name = form[0].value
     const last_name = form[1].value
-    const phone = parseInt( form[2].value )
+    const phone = parseInt(form[2].value)
     const email = form[3].value
     const password = form[4].value
     const re_password = form[5].value
 
-    const name = first_name + " " +last_name
+    const name = first_name + " " + last_name
 
     const valid_password = this.validPassword(password, re_password)
 
-    if( !valid_password ) return "Invalid password"
+    if (!valid_password) return "Invalid password"
 
-    let body = { name, first_name, last_name, email, password,  phone, }
+    let body = { name, first_name, last_name, email, password, phone, }
 
-    console.log("body - ",body)
+    console.log("body - ", body)
 
-    fetch('/server/ecommerce/auth/sign-on', {
+    let data = await fetch('/server/ecommerce/auth/sign-on', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
     })
-      .then((data) => data.json())
-      .then((res) => {
-        if (res.code != 0) {
-          console.log('No LogOn !!')
-          first_name.value = ' '
-          last_name.value = ' '
-          email.value = ' '
-          phone.value = ' '
-          password.value = ' '
-          re_password.value = ' '
-          return false
-        } else {
-          this.iniciar(pay, name, email)
-          document.getElementById('')
-          return true
-        }
-      })
-    
+
+    let res = await data.json()
+
+    showAlert(res.type, res.message)
+
+    if (res.code != 201) {
+      console.log('No LogOn !!')
+      this.viewModal(false)
+      first_name.value = ''
+      last_name.value = ''
+      email.value = ''
+      phone.value = ''
+      password.value = ''
+      re_password.value = ''
+      return false
+    } else {
+      this.iniciar(pay, name, email)
+      document.getElementById('')
+      return true
+    }
+
   },
   logout() {
     const loagout = fetch('/server/ecommerce/auth/sign-out', {
@@ -329,13 +347,12 @@ const login = {
     sessionStorage.setItem('sesion', true)
     this.mostrarBoton()
     this.viewModal(false)
-    if(sesionPago == false)
-        {
-            this.viewModal(true)
-            if(pay) this.innerPay()
-            Loader.loadOpciones()
-            this.mostrarInfoLote(loteSeleccionado) 
-        }
+    if (sesionPago == false) {
+      this.viewModal(true)
+      if (pay) this.innerPay()
+      Loader.loadOpciones()
+      this.mostrarInfoLote(loteSeleccionado)
+    }
   },
   mostrarBoton: () => {
     let btnLogin = document.getElementById('btn-login')
@@ -343,21 +360,20 @@ const login = {
     if (sessionStorage.getItem('sesion') == null) {
       btnLogout.style.display = 'none'
       btnLogin.style.display = 'block'
-      nombreUsuario.innerText = ' '
+      // nombreUsuario.innerText = ''
     }
 
     if (sessionStorage.getItem('sesion')) {
       btnLogout.style.display = 'block'
       btnLogin.style.display = 'none'
-      nombreUsuario.innerText =
-        'Bienvenido(a): ' + sessionStorage.getItem('usuario')
+      // nombreUsuario.innerText = 'Bienvenido(a): ' + sessionStorage.getItem('usuario')
     }
   },
   // Mensaje error login 
-  ocultarError(){
+  ocultarError() {
     const msgError = document.getElementById('error')
-    setTimeout(() => {      
-        msgError.remove();  
+    setTimeout(() => {
+      msgError.remove();
     }, 3500);
   },
 }

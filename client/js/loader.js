@@ -2,8 +2,8 @@
 
 import Login from './login.js'
 import Mapas from './mapas.js'
-import {MostrarAlerta} from './navegacion.js'
-import {zoomIn, zoomOut, zoomInit} from './mapas.js'
+import { MostrarAlerta } from './navegacion.js'
+import { zoomIn, zoomOut, zoomInit } from './mapas.js'
 import { validarSesion } from './main.js'
 export let loteSeleccionado
 
@@ -68,6 +68,7 @@ const loader = {
     imgs.forEach((element, index) => {
       let li = document.createElement("li")
       let img = document.createElement('img')
+      img.setAttribute("loading", "lazy") 
       img.src = `${element}`
       carrucel.appendChild(li);
       li.appendChild(img);
@@ -115,22 +116,32 @@ const loader = {
     // agrega galeria 
     const galeria = document.querySelector('.gallery');
 
-       imgs.forEach(element => {
-       let enlaceImagen = document.createElement('A');
-       enlaceImagen.setAttribute("href", `${element}`);
-       galeria.appendChild(enlaceImagen);
+    imgs.forEach(element => {
+      let enlaceImagen = document.createElement('A');
+      enlaceImagen.setAttribute("href", `${element}`);
+      galeria.appendChild(enlaceImagen);
 
-       let imagen = document.createElement('img');
-       imagen.src = `${element}`;
-       enlaceImagen.appendChild(imagen);
+      let imagen = document.createElement('img');
+      imagen.setAttribute("loading", "lazy") 
+      imagen.src = `${element}`;
+      enlaceImagen.appendChild(imagen);
 
-        lightGallery(document.querySelector('.gallery'));
+      lightGallery(document.querySelector('.gallery'));
     });
 
     // agrega mapa
     let mapa = document.getElementById('mapa-interactivo')
-    const desarrollo = frac.Fraccionamiento.toLowerCase().replace(' ', '-')
+    let desarrollo = frac.Fraccionamiento.toLowerCase().replace(' ', '-')
+    console.log("desarrollo", desarrollo)
 
+    if(desarrollo.includes('sección')){
+      let temp = desarrollo.split(' sección ')
+
+      console.log("temp ", temp)
+
+      desarrollo = temp[0] +""+ temp[1]
+    }
+    
     mapa.innerHTML = ''
     const loadPlano = await fetch(`./desarrollos/${desarrollo}/plano.svg`)
     // const loadPlano = await fetch('https://grupoconcordia.com/paginawebimg/plano.svg')
@@ -178,7 +189,13 @@ const loader = {
         let auxManzana = e.target.id.split('-')
         const manzana = auxManzana[0]
         const svgNombre = e.target.closest('svg').dataset.desarrollo
-        const fraccionamiento = document.getElementById('nombre-desarrollo').textContent
+        let fraccionamiento = document.getElementById('nombre-desarrollo').textContent
+
+        if(fraccionamiento.includes('Sección')){
+          let temp = fraccionamiento.split(' Sección ')
+          fraccionamiento = temp[0] +""+ temp[1]
+        }
+
         await Mapas.loadManzana(svgNombre, manzana, fracc)
         Mapas.getDisponiblidad(fraccionamiento, manzana)
       }
@@ -187,15 +204,14 @@ const loader = {
     mapa.addEventListener('click', (e) => {
       if (e.target.matches('[data-lote]')) {
         loteSeleccionado = e
-        if(e.target.dataset.disponible == "true")
-        {
+        if (e.target.dataset.disponible == "true") {
           Login.viewModal(true, e.target.id)
           validarSesion()
-          if(sessionStorage.getItem("sesion"))
-          Login.mostrarInfoLote(loteSeleccionado)          
-          }else{
-            MostrarAlerta()
-          }
+          if (sessionStorage.getItem("sesion"))
+            Login.mostrarInfoLote(loteSeleccionado)
+        } else {
+          MostrarAlerta()
+        }
       }
     })
 
@@ -224,7 +240,7 @@ const loader = {
 
     mapa.addEventListener('mouseout', (e) => {
       if (e.target.matches('[data-lote]') && e.target.dataset.disponible == 'true') {
-        e.target.style.fill = '#de9f27'              
+        e.target.style.fill = '#de9f27'
         Mapas.hidePopup(toolTip)
       }
     })

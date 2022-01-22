@@ -22,7 +22,7 @@ const auth = {
         let zcqlPromise = zcql.executeZCQLQuery(query);
         zcqlPromise.then(async queryResult => {
             if (queryResult.length === 0) {
-                res.send({ message: 'Usuario no registrado.' })
+                res.status(409).send({ code: 409, type: 'danger', message: 'Unregistered user.' })
                 
             } else {
                 console.log('no vacio')
@@ -35,7 +35,7 @@ const auth = {
                     const token = await tokens.createToken(IDUser, req, res)
                     console.log(req.session)
                     // console.log(req.session)
-                    res.send({ message: "Login !!", code: 0 , user_name: dataUser.name })
+                    res.status(201).send({ code: 201, type: 'success',message: "Login !!", user_name: dataUser.name })
             }
         });
     },
@@ -43,7 +43,7 @@ const auth = {
         req.session.login = false
         delete req.session.token
         console.log(req.session)
-        res.send({ message: "Logout !!", code: 0 })
+        res.status(201).send({code: 201, type: "success", message: "Logout !!"})
     },
     signOn: async (req, res) => {
         const app = catalyst.initialize(req)
@@ -91,7 +91,7 @@ const auth = {
                     const token = await tokens.createToken(IDUser, req, res)
                     console.log(req.session)
                     // console.log(req.session)
-                    res.send({ message: "created user !!", code: 0 })
+                    res.status(201).send({code: 201, type: "success",  message: "created user !!"})
                     // console.log(resp)
 
                 })
@@ -99,7 +99,7 @@ const auth = {
             } else {
                 console.log('no vacio')
                 // email ya utilizado
-                res.send({ message: 'Este correo ya tiene una cuenta registrada.' })
+                res.status(409).send({code: 409, type: "warning", message: 'This email already has a registered account.' })
             }
         });
 
