@@ -37,29 +37,29 @@ tspan{
   height:100%;
 }
 .brujula{
+  width: 95%;
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
-  padding: 10px;
-  position: relative;
-  top: calc(30vh - 75px);
-  left: calc(3vw - 75px);
-  z-index: 1;
+  position: absolute;
+  top: 20%;
+  visibility: hidden;
 }
 .brujula svg{
   width: 10%;
+  z-index: 1;
 }
 
 @media(max-width:480px){
   .brujula{
-    top: calc(15vh - 75px);
+    width: 90%;
   }
 }
 
 @media screen and (min-width:481px) and (max-width:768px){
   .brujula{
-    top: calc(24vh - 75px);
     left: calc(7vw - 75px);
+    width: 90%;
   }
   .brujula svg{ 
     width:20%;
@@ -67,6 +67,5 @@ tspan{
 }
 .disabled{
   fill: #262626;
-  /* stroke: #de2727; */
   stroke-width: 1.96px;
 }
