@@ -8,7 +8,7 @@ const catalyst = {
     // console.log(req)
     // res.json({req})
 
-    let query = `SELECT Fraccionamiento, logo, img FROM fraccionamientos`
+    let query = `SELECT Fraccionamiento, logo, img FROM fraccionamientos WHERE fraccionamientos.Active = True`
     console.log(query)
     try {
       let zcql = app.zcql()
@@ -29,7 +29,7 @@ const catalyst = {
     // console.log(req)
     // res.json({req})
 
-    let query = `SELECT * FROM fraccionamientos`
+    let query = `SELECT * FROM fraccionamientos WHERE fraccionamientos.Active = True`
     console.log(query)
 
     let zcql = app.zcql()
@@ -62,7 +62,7 @@ const catalyst = {
     // console.log(req)
     // res.json({req})
 
-    let query = `SELECT * FROM fraccionamientos WHERE fraccionamientos.Fraccionamiento = '${req.params.fraccionamiento}'`
+    let query = `SELECT * FROM fraccionamientos WHERE fraccionamientos.Fraccionamiento = '${req.params.fraccionamiento}' AND fraccionamientos.Active == True`
     console.log(query)
 
     let zcql = app.zcql()
