@@ -216,31 +216,51 @@ const loader = {
     })
 
     mapa.addEventListener('mouseover', (e) => {
-      if (e.target.matches('[data-lote]') && e.target.dataset.disponible == 'true') {
-        toolTip.innerHTML = ''
-        let lote = document.createElement('p')
-        lote.textContent = e.target.id
-        toolTip.appendChild(lote)
-        let dimension = document.createElement('p')
-        dimension.textContent = 'Dimension: ' + e.target.dataset.dimension + ' m2'
-        toolTip.appendChild(dimension)
-        let costoMetro = document.createElement('p')
-        costoMetro.textContent = 'Costo M2: $ ' + e.target.dataset.costom2
-        toolTip.appendChild(costoMetro)
-        let total = document.createElement('p')
-        total.textContent = 'Costo total: $ ' + e.target.dataset.costototal
-        toolTip.appendChild(total)
-        posicionX = e.pageX
-        posicionY = e.pageY
-        e.target.style.fill = '#e5b252'
-        e.target.style.cursor = 'pointer'
+      if (e.target.matches('[data-lote]')){
+        if(e.target.dataset.disponible == 'true') {
+          toolTip.innerHTML = ''
+          let lote = document.createElement('p')
+          lote.textContent = e.target.id
+          toolTip.appendChild(lote)
+          let dimension = document.createElement('p')
+          dimension.textContent =
+          'Dimension: ' + e.target.dataset.dimension + ' m2'
+          toolTip.appendChild(dimension)
+          let costoMetro = document.createElement('p')
+          costoMetro.textContent = 'Costo M2: $ ' + e.target.dataset.costom2
+          toolTip.appendChild(costoMetro)
+          let total = document.createElement('p')
+          total.textContent = 'Costo total: $ ' + e.target.dataset.costototal
+          toolTip.appendChild(total)
+          posicionX = e.pageX
+          posicionY = e.pageY
+          e.target.style.fill = '#e5b252'
+          e.target.style.cursor = 'pointer'
+        }
+        else{
+          toolTip.innerHTML = ''
+          let lote = document.createElement('p')
+          lote.textContent = e.target.id
+          toolTip.appendChild(lote)
+          let estado = document.createElement('p')
+          estado.textContent = 'No disponible'
+          toolTip.appendChild(estado)
+          posicionX = e.pageX
+          posicionY = e.pageY
+          e.target.style.fill = '#252525'
+        }
         Mapas.showPopup(toolTip, posicionX, posicionY)
       }
     })
 
     mapa.addEventListener('mouseout', (e) => {
-      if (e.target.matches('[data-lote]') && e.target.dataset.disponible == 'true') {
-        e.target.style.fill = '#de9f27'
+      if (e.target.matches('[data-lote]')){
+        if(e.target.dataset.disponible == 'true') {
+          e.target.style.fill = '#de9f27'
+        }
+        else{
+          e.target.style.fill = '#2e2e2e'
+        }
         Mapas.hidePopup(toolTip)
       }
     })
