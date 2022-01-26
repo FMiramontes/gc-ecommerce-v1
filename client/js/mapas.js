@@ -54,35 +54,44 @@ const mapa = {
   async getDisponiblidad(fraccionamiento, manzana){
     preloader.style.display = 'flex'
     containerMapa.style.display = 'none'
-    const request = await fetch(
-      `/server/ecommerce/crm/getDisponibilidad/${fraccionamiento}/${manzana}`
-    )
+    try {
+      const request = await fetch(`/server/ecommerce/crm/getDisponibilidad/${fraccionamiento}/${manzana}`)
 
-    const data = await request.json()
+      this.pintarDisponibles()
+      if(request.ok) {
 
-    this.poblarLotificacion( await data.data)
+        const data = await request.json()
+
+        if(data.length > 0) this.poblarLotificacion( await data.data)
+      }
+    } catch (error) {
+      console.log( error )
+    }
   },
-  poblarLotificacion(disponibilidad){
-
+  pintarDisponibles(){
     const tempLotes = document.querySelectorAll(".cls-2")
     const lostes2 = Array.from(tempLotes)
-    const Inexistentes = []
   
-    lostes2.map((lote) => {
-      if (lote.id.includes("L")) {
-        lote.style.fill = '#de9f27'
-        lote.style.stroke = '#000'
-        lote.setAttribute("stroke-width", "1")
-        lote.dataset.lote = ""
-        lote.dataset.crm = false
-        lote.classList = "login"
-        lote.dataset.disponible = true
+    lostes2.forEach((lote) => {
+      try{
+        if (lote.id.includes("L")) {
+          lote.style.fill = '#de9f27'
+          lote.style.stroke = '#000'
+          lote.setAttribute("stroke-width", "1")
+          lote.dataset.lote = ""
+          lote.dataset.crm = false
+          lote.classList = "login"
+          lote.dataset.disponible = true
+        }
+      } catch (err) {
+        console.log(err)
       }
     })
     preloader.style.display = 'none'
     containerMapa.style.display = 'flex'
-  
-    disponibilidad.map((product) => {
+  },
+  poblarLotificacion(disponibilidad){  
+    disponibilidad.forEach((product) => {
       try {
         let lote = ''
         if( product.Lote_Letra == null){
@@ -90,28 +99,31 @@ const mapa = {
         }else{
           lote = document.getElementById(`M${product.Manzana}-L${product.Lote + product.Lote_Letra}`)
         }
+
         
-  
-        lote.dataset.crm_id = product.id
-        lote.dataset.trato = product.Product_Name
-        lote.dataset.crm = true
-        lote.dataset.costototal = product.Unit_Price
-        lote.dataset.dimension = product.Dimension_del_Terreno_M21
-        lote.dataset.costom2 = product.Costo_por_M2
-  
-        if (product.Estado != "Disponible") {
-          lote.style.fill = '#2e2e2e'
-          lote.style.stroke = '#000'
-          lote.removeAttribute('onclick')
-          lote.dataset.disponible = false
-        } else if (product.Estado == "Disponible") {
-          lote.style.fill = '#de9f27'
-          lote.style.stroke = '#000'
-          lote.dataset.disponible = true
+        
+        if( lote !== null) {
+          lote.dataset.crm_id = product.id
+          lote.dataset.trato = product.Product_Name
+          lote.dataset.crm = true
+          lote.dataset.costototal = product.Unit_Price
+          lote.dataset.dimension = product.Dimension_del_Terreno_M21
+          lote.dataset.costom2 = product.Costo_por_M2
+    
+          if (product.Estado != "Disponible") {
+            lote.style.fill = '#2e2e2e'
+            lote.style.stroke = '#000'
+            lote.removeAttribute('onclick')
+            lote.dataset.disponible = false
+          } else if (product.Estado == "Disponible") {
+            lote.style.fill = '#de9f27'
+            lote.style.stroke = '#000'
+            lote.dataset.disponible = true
+          }
         }
       } catch (err) {
         console.log(err)
-      }
+      }     
     })
   
   

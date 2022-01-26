@@ -48,6 +48,8 @@ const crm = {
         try {
             const resp = await axios(config)
 
+            console.log(resp)
+
             const data = resp.data.data
             const crmJSON = [...data].map((lote) => {
             return {
