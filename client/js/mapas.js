@@ -55,13 +55,15 @@ const mapa = {
     preloader.style.display = 'flex'
     containerMapa.style.display = 'none'
     try {
+      
       const request = await fetch(`/server/ecommerce/crm/getDisponibilidad/${fraccionamiento}/${manzana}`)
 
-      this.pintarDisponibles()
+      
+      const data = await request.json()
       if(request.ok) {
 
-        const data = await request.json()
-
+        
+        this.pintarDisponibles()
         if(data.length > 0) this.poblarLotificacion( await data.data)
       }
     } catch (error) {
@@ -71,6 +73,10 @@ const mapa = {
   pintarDisponibles(){
     const tempLotes = document.querySelectorAll(".cls-2")
     const lostes2 = Array.from(tempLotes)
+
+    console.log( " pintarDisponibles " )
+    console.log( " lostes2:  ", lostes2 )
+
   
     lostes2.forEach((lote) => {
       try{
@@ -91,6 +97,30 @@ const mapa = {
     containerMapa.style.display = 'flex'
   },
   poblarLotificacion(disponibilidad){  
+    // const tempLotes = document.querySelectorAll(".cls-2")
+    // const lostes2 = Array.from(tempLotes)
+
+    // console.log( " pintarDisponibles " )
+    // console.log( " lostes2:  ", lostes2 )
+
+  
+    // lostes2.forEach((lote) => {
+    //   try{
+    //     if (lote.id.includes("L")) {
+    //       lote.style.fill = '#de9f27'
+    //       lote.style.stroke = '#000'
+    //       lote.setAttribute("stroke-width", "1")
+    //       lote.dataset.lote = ""
+    //       lote.dataset.crm = false
+    //       lote.classList = "login"
+    //       lote.dataset.disponible = true
+    //     }
+    //   } catch (err) {
+    //     console.log(err)
+    //   }
+    // })
+    // preloader.style.display = 'none'
+    // containerMapa.style.display = 'flex'
     disponibilidad.forEach((product) => {
       try {
         let lote = ''

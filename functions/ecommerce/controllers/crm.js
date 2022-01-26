@@ -51,6 +51,9 @@ const crm = {
             console.log(resp)
 
             const data = resp.data.data
+            if(data === undefined || data === null){
+                return res.status(200).send({ data: null, ok: false, length: 0 })
+            }
             const crmJSON = [...data].map((lote) => {
             return {
                 id: lote.id,
