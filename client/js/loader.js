@@ -197,7 +197,7 @@ const loader = {
         }
 
         await Mapas.loadManzana(svgNombre, manzana, fracc)
-        Mapas.getDisponiblidad(fraccionamiento, manzana)
+        await Mapas.getDisponiblidad(fraccionamiento, manzana)
       }
     })
 

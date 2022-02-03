@@ -1,48 +1,45 @@
-const axios = require('axios')
-const jwt = require('jsonwebtoken')
-const catalyst = require('zcatalyst-sdk-node')
-const catalystToken = require('../catalysToken')
-const { desk, cliq, cache } = require('../controllers/zoho')
-const crm = require('../controllers/crm')
+const axios = require("axios");
+const jwt = require("jsonwebtoken");
+const catalyst = require("zcatalyst-sdk-node");
+const catalystToken = require("../catalysToken");
+const { desk, cliq, cache } = require("../controllers/zoho");
+const crm = require("../controllers/crm");
 
 const util = {
   getSeccion(data) {
-    let secciones_array = JSON.parse(data.secciones)
+    let secciones_array = JSON.parse(data.secciones);
     secciones_array.forEach((e) => {
-
       if (manzana >= e.init && manzana <= e.end) {
         if (e.Lotes != null && manzana == e.end) {
           if (tempLote >= e.Lotes.init && tempLote <= e.Lotes.end) {
-            item_name = data.code + ' ' + e.name + ' ' + item
-            sku = name_array2[0] + "" + e.symbol + "" + name_array2[1]
-            Fraccionamiento = e.id.toString()
+            item_name = data.code + " " + e.name + " " + item;
+            sku = name_array2[0] + "" + e.symbol + "" + name_array2[1];
+            Fraccionamiento = e.id.toString();
             if (e.name) {
-              nombre_fracionamiento = data.Fraccionamiento + " " + e.name
+              nombre_fracionamiento = data.Fraccionamiento + " " + e.name;
             } else {
-              nombre_fracionamiento = data.Fraccionamiento
+              nombre_fracionamiento = data.Fraccionamiento;
             }
           }
         } else {
-          item_name = data.code + ' ' + e.name + ' ' + item
-          sku = name_array2[0] + "" + e.symbol + "" + name_array2[1]
-          Fraccionamiento = e.id.toString()
+          item_name = data.code + " " + e.name + " " + item;
+          sku = name_array2[0] + "" + e.symbol + "" + name_array2[1];
+          Fraccionamiento = e.id.toString();
           if (e.name) {
-            nombre_fracionamiento = data.Fraccionamiento + " " + e.name
+            nombre_fracionamiento = data.Fraccionamiento + " " + e.name;
           } else {
-            nombre_fracionamiento = data.Fraccionamiento
+            nombre_fracionamiento = data.Fraccionamiento;
           }
-
         }
       }
-    })
+    });
   },
-}
+};
 
 const books = {
   // createTicket: async (req, res) => {
   //   // console.log("Work !!")
   //   try {
-
 
   //     const accessToken = await catalystToken(req)
 
@@ -65,63 +62,76 @@ const books = {
   // },
   createLead: async (req, res) => {
     try {
-      const accessToken = await catalystToken(req)
-      const app = catalyst.initialize(req)
+      const accessToken = await catalystToken(req);
+      const app = catalyst.initialize(req);
       //Check for session
-      if (!req.session.login) return res.status(401).send({ code: 401, type: 'warning', message: 'Invalid user' })
+      if (!req.session.login)
+        return res
+          .status(401)
+          .send({ code: 401, type: "warning", message: "Invalid user" });
 
       // Decode jwt
-      const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET)
+      const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET);
 
       // Search for user in DB
       let query_user = `SELECT * FROM users WHERE users.ROWID = '${decoded.idUser}'`;
 
-      let zcql = app.zcql()
+      let zcql = app.zcql();
       let user = await zcql.executeZCQLQuery(query_user);
-      if (user.length == 0) return res.status(401).send({ code: 401, type: 'warning', message: "User not found !!" })
-
-
+      if (user.length == 0)
+        return res
+          .status(401)
+          .send({ code: 401, type: "warning", message: "User not found !!" });
 
       // User
-      let first_name = user[0].users.first_name
-      let last_name = user[0].users.last_name
-      let phone = user[0].users.phone
-      let email = user[0].users.email
+      let first_name = user[0].users.first_name;
+      let last_name = user[0].users.last_name;
+      let phone = user[0].users.phone;
+      let email = user[0].users.email;
 
-      let name = first_name + " " + last_name
+      let name = first_name + " " + last_name;
 
       // Start of proccess
-      const { item, position, esEnganche } = req.body
+      const { item, position, esEnganche } = req.body;
 
-      let query = `SELECT * FROM fraccionamientos`
-      let query_fraccionamiento = await zcql.executeZCQLQuery(query)
+      let query = `SELECT * FROM fraccionamientos`;
+      let query_fraccionamiento = await zcql.executeZCQLQuery(query);
 
-      if (query_fraccionamiento.length == 0) return res.status(404).send({ code: 404, type: 'warning', message: "Block not found !!" })
+      if (query_fraccionamiento.length == 0)
+        return res
+          .status(404)
+          .send({ code: 404, type: "warning", message: "Block not found !!" });
 
-      data = query_fraccionamiento[position].fraccionamientos
+      data = query_fraccionamiento[position].fraccionamientos;
 
-      let Product_Name = data.Fraccionamiento + " " + item
+      let Product_Name = data.Fraccionamiento + " " + item;
 
-      const tipoDePolitica = esEnganche ? 'Enganche' : 'Primer Mensualidad'
-      let leadCreated = false
-      let isContact = true
-      let message = ''
+      const tipoDePolitica = esEnganche ? "Enganche" : "Primer Mensualidad";
+      let leadCreated = false;
+      let isContact = true;
+      let message = "";
 
       // If Contact
-      const searchContact = await crm.searchContact(email, accessToken)
+      const searchContact = await crm.searchContact(email, accessToken);
       if (!searchContact.success) {
         // Contact not found
-        isContact = false
+        isContact = false;
         // If Lead
-        const searchLead = await crm.searchLead(email, accessToken)
-        console.log("searchLead - ", searchLead)
+        const searchLead = await crm.searchLead(email, accessToken);
+        console.log("searchLead - ", searchLead);
         if (!searchLead.success) {
           // Create Lead
-          console.log("Creando Lead")
-          const createLead = await crm.createLead(first_name, last_name, email, phone, accessToken)
-          console.log("createLead - ", createLead)
+          console.log("Creando Lead");
+          const createLead = await crm.createLead(
+            first_name,
+            last_name,
+            email,
+            phone,
+            accessToken
+          );
+          console.log("createLead - ", createLead);
           if (createLead.success) {
-            leadCreated = true
+            leadCreated = true;
           }
 
           // throw new Error('Lead not created')
@@ -144,66 +154,79 @@ const books = {
           `;
       }
 
-      console.log('isContact', isContact)
-      console.log('leadCreated', leadCreated)
-      console.log('message', message)
+      console.log("isContact", isContact);
+      console.log("leadCreated", leadCreated);
+      console.log("message", message);
 
+      const userCache = await cache.getCache(email, app);
 
-      const userCache = await cache.getCache(email, app)
-
-      console.log(userCache)
-
-
+      console.log(userCache);
 
       if (userCache !== null) {
-        // verifica si son menos de 5 
-        let lotes = JSON.parse(userCache)
+        // verifica si son menos de 5
+        let lotes = JSON.parse(userCache);
 
-        if ( lotes.length >= 5 ) return res.status(400).send({message: 'You have reached the limit amount of tickets. Plese try again later.', success: false})
-    
-        const validCache = lotes.find((name) => name == Product_Name)
+        if (lotes.length >= 5)
+          return res.status(400).send({
+            message:
+              "You have reached the limit amount of tickets. Plese try again later.",
+            success: false,
+          });
 
-        if ( validCache ) return res.status(403).send( {code: 403, type: 'danger', message: "Ticket already created"} )
+        const validCache = lotes.find((name) => name == Product_Name);
 
+        if (validCache)
+          return res.status(403).send({
+            code: 403,
+            type: "danger",
+            message: "Ticket already created",
+          });
       }
-      
+
       // Create ticket
-      const resp = await desk.createTicket(`${name} interesado en adquirir ${Product_Name}`, message, accessToken)
+      const resp = await desk.createTicket(
+        `${name} interesado en adquirir ${Product_Name}`,
+        message,
+        accessToken
+      );
 
-      if (resp.code == 500) console.log("error - ", resp.error)
+      if (resp.code == 500) console.log("error - ", resp.error);
 
-      console.log("message - ", resp.message)
+      console.log("message - ", resp.message);
 
       if (userCache === null) {
         // No tickets created yet
-        // create 
-        const createCache = await cache.createCache(email, Product_Name, app)
-        console.log('Creating cache', createCache)
-      }else{
+        // create
+        const createCache = await cache.createCache(email, Product_Name, app);
+        console.log("Creating cache", createCache);
+      } else {
         // User has tickets created
         // update
-        let lotes = JSON.parse(userCache)
-        lotes.push(Product_Name)
+        let lotes = JSON.parse(userCache);
+        lotes.push(Product_Name);
 
-        const updateCache = await cache.updateCache(email, JSON.stringify(lotes), app)
-        console.log('Updating cache', updateCache)
+        const updateCache = await cache.updateCache(
+          email,
+          JSON.stringify(lotes),
+          app
+        );
+        console.log("Updating cache", updateCache);
       }
-      let type = ''
+      let type = "";
 
-      if ( resp.success ) type = 'success'
-      if ( !resp.success ) type = 'danger'
+      if (resp.success) type = "success";
+      if (!resp.success) type = "danger";
 
-      
-
-      res.status(resp.code).send({ code: resp.code, type: type, message: resp.message })
-
+      res
+        .status(resp.code)
+        .send({ code: resp.code, type: type, message: resp.message });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
-}
+  },
+};
 
-module.exports = books
+module.exports = books;
 
 /*
 const crm = {
@@ -788,38 +811,28 @@ module.exports = books2
 */
 
 /* 
- data = [
-      //oro
-      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 4, "end": 22, "Lotes": {"init": 1, "end": 19} }, 
-      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 23, "end": 35, "Lotes": {"init": 1, "end": 26} },
-      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 36, "end": 37, "Lotes": null }, 
-      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 129, "end": 133, "Lotes": null }, 
-      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "Unit_Price": 20000, "Costo_x_M2":495, "Dimensiones":200, "init": 139, "end": 144, "Lotes": null },
-      // perla 
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 22, "end": 22, "Lotes": {"init": 20, "end": 44} }, 
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 35, "end": 35, "Lotes": {"init": 27, "end": 53} },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 41, "end": 53, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 60, "end": 100, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 127, "end": 128, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 134, "end": 138, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 150, "end": 162, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 164, "end": 170, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 172, "end": 186, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 188, "end": 188, "Lotes": null },
-      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 192, "end": 194, "Lotes": null },
-      //ELITE
-      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 101, "end": 105, "Lotes": null },
-      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 107, "end": 109, "Lotes": null },
-      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 111, "end": 112, "Lotes": null },
-      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 196, "end": 199, "Lotes": null }
-      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 200, "end": 206, "Lotes": null }
-      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "Unit_Price": 20000, "Costo_x_M2":200, "Dimensiones":200, "init": 208, "end": 208, "Lotes": null }
-      
-    ]
 
-    [
-      { "id": "2234337000006131928", "name": "Villa Toscana", "symbol": "-", "init": 21, "end": 34, "Lotes": null },
-      { "id": "2234337000006131928", "name": "Villa Toscana", "symbol": "-", "init": 36, "end": 42, "Lotes": null },
-      { "id": "2234337000006131928", "name": "Villa Toscana", "symbol": "-", "init": 46, "end": 54, "Lotes": null }
-    ]
+    [ 
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "init": 4, "end": 22, "Lotes": {"init": 1, "end": 19} }, 
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "init": 23, "end": 35, "Lotes": {"init": 1, "end": 26} }, 
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "init": 36, "end": 37, "Lotes": null }, 
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "init": 129, "end": 133, "Lotes": null }, 
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "init": 135, "end": 144, "Lotes": null },
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "init": 99, "end": 100, "Lotes": null },
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "init": 127, "end": 128, "Lotes": null },  
+      { "id": "2234337000054406057", "name": "ORO", "symbol": "'", "init": 192, "end": 195, "Lotes": null },      
+
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 22, "end": 22, "Lotes": {"init": 20, "end": 44} }, 
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 35, "end": 35, "Lotes": {"init": 27, "end": 53} }, 
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 41, "end": 52, "Lotes": null }, 
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 60, "end": 98, "Lotes": null }, 
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 150, "end": 162, "Lotes": null }, 
+      { "id": "2234337000054406063", "name": "PERLA", "symbol": "}", "init": 164, "end": 188, "Lotes": null }, 
+
+      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "init": 101, "end": 105, "Lotes": null }, 
+      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "init": 107, "end": 109, "Lotes": null }, 
+      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "init": 111, "end": 112, "Lotes": null }, 
+      { "id": "2234337000054406069", "name": "ELITE", "symbol": ":", "init": 196, "end": 199, "Lotes": null } 
+    ]	
+
 */
